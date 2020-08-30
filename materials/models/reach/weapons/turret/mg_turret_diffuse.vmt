@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+	$basetexture			"models\reach\weapons\turret\mg_turret_diffuse"
+	$bumpmap 		        "models\reach\weapons\turret\mg_turret_zbump"
+//	$halflambert 1
+	
+//	$detail					""
+	$detailscale 25
+	$detailblendfactor 1.2
+
+//    $phong 1
+	$phongalbedotint 1
+	$phongboost 4
+	$phongfresnelranges	"[0.25 0.75 0.5]"
+
+//	$rimlight 1						
+	$rimlightexponent 50			
+	$rimlightboost 0.1
+	$rimmask 1
+}
