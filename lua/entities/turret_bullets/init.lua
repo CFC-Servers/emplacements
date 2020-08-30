@@ -85,7 +85,7 @@ function ENT:Initialize()
 		soundlevel = "SNDLVL_GUNFIRE",
 		pitchstart = 98,
 		pitchend = 110,
-		sound = "hturret/Discharge.wav"
+		sound = "hturret/discharge.wav"
 	})
 	
 end
