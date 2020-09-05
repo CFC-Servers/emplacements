@@ -147,6 +147,7 @@ function ENT:DoShot()
 			nade:Spawn()
 			
 			nade:SetOwner(self.Shooter)
+			nade.Turret = self
 			
 			self:GetPhysicsObject():ApplyForceCenter( self:GetRight()*-10000 )
 			
