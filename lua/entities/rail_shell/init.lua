@@ -46,9 +46,9 @@ end
 
 			if self.AirburstTime < CurTime() then
 
-            local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-            local inflictor = owner or self.Turret
-            util.BlastDamage(inflictor, self.Turret, self.Entity:GetPos(), 700, 100)
+			local owner = IsValid( self:GetOwner() ) and self:GetOwner()
+			local inflictor = owner or self.Turret
+			util.BlastDamage(inflictor, self.Turret, self.Entity:GetPos(), 700, 100)
 			local effectdata = EffectData()
 			effectdata:SetOrigin(self.Entity:GetPos())
 			effectdata:SetScale(2)
