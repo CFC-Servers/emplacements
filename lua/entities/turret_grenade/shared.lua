@@ -96,6 +96,7 @@ function ENT:DoShot()
 			nade:Spawn()
 			nade:SetOwner(self.Shooter)
 			nade.flightvector = self:GetRight() *35
+			nade.Turret = self
 			--self:GetPhysicsObject():ApplyForceCenter( self:GetRight()*-10000 )
 			--[[local b = ents.Create( "info_target" )
 			if (IsValid(b)) then
