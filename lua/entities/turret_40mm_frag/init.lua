@@ -81,9 +81,9 @@ end
 					return true
 					end
 
-                    local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-                    local inflictor = owner or self.Turret
-                    util.BlastDamage(inflictor, self.Turret, self.Entity:GetPos(), 400, 45)
+					local owner = IsValid( self:GetOwner() ) and self:GetOwner()
+					local inflictor = owner or self.Turret
+					util.BlastDamage(inflictor, self.Turret, self.Entity:GetPos(), 400, 45)
 
 					local effectdata = EffectData()
 					effectdata:SetOrigin(tr.HitPos)				// Position of Impact
