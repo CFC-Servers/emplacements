@@ -37,6 +37,9 @@ end
 function ENT:Use(plr)
 	
 	if not self:ShooterStillValid() then
+		local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
+		if call == false then return end
+
 		self:SetShooter(plr)
 		self:StartShooting()
 		self.ShooterLast=plr
