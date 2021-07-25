@@ -23,7 +23,7 @@ function ENT:CreateEmplacement()
 	shootPos:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self.shootPos=shootPos
 	shootPos:SetParent(self)
-    shootPos:Fire("setparentattachment","muzzle")
+	shootPos:Fire("setparentattachment","muzzle")
 	shootPos:SetNoDraw(false)
 	shootPos:DrawShadow(false)
 	--shootPos:SetColor(Color(0,0,0,0))

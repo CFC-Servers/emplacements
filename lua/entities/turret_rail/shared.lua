@@ -15,23 +15,23 @@ ENT.LastShot 			=0
 ENT.ShotInterval 		=4.5
 
 function ENT:EmplacementSetupCheck()
-    if self.Setup then return end
-    self.Setup = true
+	if self.Setup then return end
+	self.Setup = true
 
-    timer.Simple( 0.2, function()
-        if not IsValid( self ) then return end
-        self.LastShot = CurTime() + 8
+	timer.Simple( 0.2, function()
+		if not IsValid( self ) then return end
+		self.LastShot = CurTime() + 8
 
-        -- Setup sounds
-        if SERVER then
-            self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 )
-            timer.Simple( 3, function()
-                if not IsValid( self ) then return end
-                self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
-            end )
-        end
+		-- Setup sounds
+		if SERVER then
+			self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 )
+			timer.Simple( 3, function()
+				if not IsValid( self ) then return end
+				self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
+			end )
+		end
 
-    end )
+	end )
 end
 
 function ENT:SetupDataTables()
@@ -40,12 +40,12 @@ function ENT:SetupDataTables()
 end
 
 function ENT:SetShooter(plr)
-    if IsValid( plr ) then
-        plr.CurrentEmplacement = self
-        
-    elseif IsValid( self.Shooter ) then
-        self.Shooter.CurrentEmplacement = nil
-    end
+	if IsValid( plr ) then
+		plr.CurrentEmplacement = self
+		
+	elseif IsValid( self.Shooter ) then
+		self.Shooter.CurrentEmplacement = nil
+	end
 	self.Shooter=plr
 	self:SetDTEntity(0,plr)
 end
@@ -97,8 +97,8 @@ function ENT:Think()
 	else
 		if IsValid(self) then
 			
-            self:EmplacementSetupCheck()
-            
+			self:EmplacementSetupCheck()
+			
 			if SERVER then
 				self.BasePos=self.turretBase:GetPos()
 				self.OffsetPos=self.turretBase:GetAngles():Up()*1

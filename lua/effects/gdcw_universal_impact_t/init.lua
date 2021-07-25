@@ -1,10 +1,10 @@
 
 					//Sound,Impact
 
-					// 1        2       3      4      5
+					// 1		2	   3	  4	  5
 					//Dirt, Concrete, Metal, Glass, Flesh
 
-					// 1     2     3      4      5      6      7      8         9
+					// 1	 2	 3	  4	  5	  6	  7	  8		 9
 					//Dust, Dirt, Sand, Metal, Smoke, Wood,  Glass, Blood, YellowBlood
 local mats={				
 	[MAT_ALIENFLESH]		={5,9},
@@ -47,7 +47,7 @@ function EFFECT:Init(data)
 
 	
 	if(self.Mat != nil)then
-		if     mats[self.Mat][2]==1 then	self:Dust()	
+		if	 mats[self.Mat][2]==1 then	self:Dust()	
 		elseif mats[self.Mat][2]==2 then	self:Dirt()
 		elseif mats[self.Mat][2]==3 then	self:Sand()
 		elseif mats[self.Mat][2]==4 then	self:Metal()
