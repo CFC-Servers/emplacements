@@ -10,10 +10,9 @@ self.timeleft = CurTime() + 15
 
 self.AirburstTime = CurTime() + 15 
 self.Entity:SetModel( "models/items/ar2_grenade.mdl" )
-self.Entity:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,  	
+self.Entity:PhysicsInit( SOLID_VPHYSICS )	  -- Make us work with physics,  	
 self.Entity:SetMoveType( MOVETYPE_NONE )   --after all, gmod is a physics  	
-self.Entity:SetSolid( SOLID_VPHYSICS )        -- CHEESECAKE!    >:3           
-self.Entity:SetColor( Color( 255,255,255,255) )
+self.Entity:SetSolid( SOLID_VPHYSICS )		-- CHEESECAKE!	>:3		   
 
 Tracer = ents.Create("env_spritetrail")
 Tracer:SetKeyValue("lifetime","0.3")
@@ -68,30 +67,30 @@ end
 
 				if tr.Hit then
 					if tr.HitSky then
-                        self.Entity:Remove()
-                        return true
+						self.Entity:Remove()
+						return true
 					end
 					if tr.MatType==83 then				//83 is wata
-                        local effectdata = EffectData()
-                        effectdata:SetOrigin( tr.HitPos )
-                        effectdata:SetNormal( tr.HitNormal )		// In case you hit sideways water?
-                        effectdata:SetScale( 60 )			// Big splash for big bullets
-                        util.Effect( "watersplash", effectdata )
-                        self.Entity:Remove()
-                        return true
+						local effectdata = EffectData()
+						effectdata:SetOrigin( tr.HitPos )
+						effectdata:SetNormal( tr.HitNormal )		// In case you hit sideways water?
+						effectdata:SetScale( 60 )			// Big splash for big bullets
+						util.Effect( "watersplash", effectdata )
+						self.Entity:Remove()
+						return true
 					end
 
 					local owner = IsValid( self:GetOwner() ) and self:GetOwner()
 					local inflictor = owner or self.Turret
 					util.BlastDamage(inflictor, self.Turret, self.Entity:GetPos(), 400, 45)
-
+					local concrete = 67
 					local effectdata = EffectData()
 					effectdata:SetOrigin(tr.HitPos)				// Position of Impact
 					effectdata:SetNormal(tr.HitNormal)			// Direction of Impact
 					effectdata:SetStart(self.flightvector:GetNormalized())	// Direction of Round
 					effectdata:SetEntity(self.Entity)			// Who done it?
 					effectdata:SetScale(0.6)				// Size of explosion
-					effectdata:SetRadius(67)			// Texture of Impact
+					effectdata:SetRadius( concrete )			// Texture of Impact
 					effectdata:SetMagnitude(16)				// Length of explosion trails	
 					util.Effect( "gdca_airburst_t", effectdata )
 					util.ScreenShake(tr.HitPos, 10, 5, 1, 1300 )
