@@ -15,22 +15,20 @@ ENT.LastShot=0
 ENT.ShotInterval=0.07
 
 function ENT:EmplacementSetupCheck()
-    if not self.Setup then
-        self.Setup = true
+    if self.Setup then return end
+    self.Setup = true
         
-        timer.Simple( 0.2, function()
-            if not IsValid( self ) then return end
-            self.LastShot = CurTime() + 5
+    timer.Simple( 0.2, function()
+        if not IsValid( self ) then return end
+        self.LastShot = CurTime() + 5
             
-            -- Setup sounds
-            if SERVER then
-                self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
-            end
-            
-        end )
-        
-    end
+        -- Setup sounds
+        if SERVER then
+            self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
+        end
+    end )
 end
+
     
 function ENT:SetupDataTables()
 	self:DTVar("Entity",0,"Shooter")
