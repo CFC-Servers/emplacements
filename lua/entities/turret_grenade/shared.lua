@@ -14,6 +14,28 @@ ENT.TurretTurnMax=0.7
 ENT.LastShot=0
 ENT.ShotInterval=0.7
 
+function ENT:EmplacementSetupCheck()
+    if not self.Setup then
+        self.Setup = true
+        
+        timer.Simple( 0.2, function()
+            if not IsValid( self ) then return end
+            self.LastShot = CurTime() + 8
+            
+            -- Setup sounds
+            if SERVER then
+                self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 )
+                timer.Simple( 3, function()
+                    if not IsValid( self ) then return end
+                    self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
+                    
+                end )
+            end
+            
+        end )
+        
+    end
+end
 
 function ENT:SetupDataTables()
 	self:DTVar("Entity",0,"Shooter")
@@ -21,6 +43,12 @@ function ENT:SetupDataTables()
 end
 
 function ENT:SetShooter(plr)
+    if IsValid( plr ) then
+        plr.CurrentEmplacement = self
+        
+    elseif IsValid( self.Shooter ) then
+        self.Shooter.CurrentEmplacement = nil
+    end
 	self.Shooter=plr
 	self:SetDTEntity(0,plr)
 end
@@ -135,7 +163,9 @@ function ENT:Think()
 			end
 		end]]
 		if IsValid(self) then
-			
+            
+            self:EmplacementSetupCheck()
+            
 			if SERVER then
 				self.BasePos=self.turretBase:GetPos()
 				self.OffsetPos=self.turretBase:GetAngles():Up()*1

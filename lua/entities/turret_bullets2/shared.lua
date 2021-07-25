@@ -14,6 +14,28 @@ ENT.TurretTurnMax=0.7
 ENT.LastShot=0
 ENT.ShotInterval=0.4
 
+function ENT:EmplacementSetupCheck()
+    if not self.Setup then
+        self.Setup = true
+        
+        timer.Simple( 0.2, function()
+            if not IsValid( self ) then return end
+            self.LastShot = CurTime() + 8
+            
+            -- Setup sounds
+            if SERVER then
+                self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 )
+                timer.Simple( 3, function()
+                    if not IsValid( self ) then return end
+                    self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
+                    
+                end )
+            end
+            
+        end )
+        
+    end
+end
 
 function ENT:SetupDataTables()
 	self:DTVar("Entity",0,"Shooter")
@@ -21,6 +43,12 @@ function ENT:SetupDataTables()
 end
 
 function ENT:SetShooter(plr)
+    if IsValid( plr ) then
+        plr.CurrentEmplacement = self
+        
+    elseif IsValid( self.Shooter ) then
+        self.Shooter.CurrentEmplacement = nil
+    end
 	self.Shooter=plr
 	self:SetDTEntity(0,plr)
 end
@@ -39,7 +67,14 @@ function ENT:Use(plr)
 	if not self:ShooterStillValid() then
 		local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
 		if call == false then return end
-
+        
+        if IsValid( plr.CurrentEmplacement ) then
+            if SERVER then 
+                -- plays sound on self to remind players this is an intended feature
+                self:EmitSound( "common/wpn_denyselect.wav", 60 )
+            end
+        return end
+        
 		self:SetShooter(plr)
 		self:StartShooting()
 		self.ShooterLast=plr
@@ -85,7 +120,9 @@ function ENT:DoShot()
 			util.Effect( "MuzzleEffect", effectdata )
 			
 		--elseif SERVER then
-			self:EmitSound(self.ShotSound,50,100)
+            local variance = math.random( -5, 5 )
+			self:EmitSound( self.ShotSound, 50, 100 + variance )
+            self:EmitSound( "weapons/ar2/fire1.wav", 70, 60 )
 			
 			
 		end
@@ -98,8 +135,8 @@ function ENT:DoShot()
 				Dir=self.shootPos:GetAngles():Up()*1,
 				Spread=Vector(0.005,0.005,0),
 				Tracer=0,
-				Force=50,
-				Damage=55,
+				Force=90,
+				Damage=90,
 				Attacker=self.Shooter,
 				Callback=function(attacker,trace,dmginfo) 
 					--if CLIENT then
@@ -109,11 +146,11 @@ function ENT:DoShot()
 						tracerEffect:SetOrigin(trace.HitPos)
 						tracerEffect:SetScale(6000)
 						util.Effect("Tracer",tracerEffect)
-						if(!trace.HitSky)then
+						if(!trace.HitSky) then
 						local effectdata = EffectData()
 						effectdata:SetOrigin(trace.HitPos)
 						effectdata:SetScale(1.2)
-						effectdata:SetRadius(trace.MatType)
+						effectdata:SetRadius(67)
 						effectdata:SetNormal(trace.HitNormal)
 						util.Effect("gdcw_universal_impact_t",effectdata)
 						end
@@ -155,6 +192,8 @@ function ENT:Think()
 				self.OffsetPos=self.turretBase:GetAngles():Up()*1
 			end
 			
+            self:EmplacementSetupCheck()
+            
 			if self:ShooterStillValid() then
 			
 				if SERVER then
