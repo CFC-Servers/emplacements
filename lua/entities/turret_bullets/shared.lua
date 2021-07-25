@@ -14,13 +14,36 @@ ENT.TurretTurnMax=0.7
 ENT.LastShot=0
 ENT.ShotInterval=0.07
 
-
+function ENT:EmplacementSetupCheck()
+    if not self.Setup then
+        self.Setup = true
+        
+        timer.Simple( 0.2, function()
+            if not IsValid( self ) then return end
+            self.LastShot = CurTime() + 5
+            
+            -- Setup sounds
+            if SERVER then
+                self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
+            end
+            
+        end )
+        
+    end
+end
+    
 function ENT:SetupDataTables()
 	self:DTVar("Entity",0,"Shooter")
 	self:DTVar("Entity",1,"ShootPos")
 end
 
 function ENT:SetShooter(plr)
+    if IsValid( plr ) then
+        plr.CurrentEmplacement = self
+        
+    elseif IsValid( self.Shooter ) then
+        self.Shooter.CurrentEmplacement = nil
+    end
 	self.Shooter=plr
 	self:SetDTEntity(0,plr)
 end
@@ -39,7 +62,14 @@ function ENT:Use(plr)
 	if not self:ShooterStillValid() then
 		local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
 		if call == false then return end
-
+        
+        if IsValid( plr.CurrentEmplacement ) then
+            if SERVER then 
+                -- plays sound on self to remind players this is an intended feature
+                self:EmitSound( "common/wpn_denyselect.wav", 60 )
+            end
+        return end
+        
 		self:SetShooter(plr)
 		self:StartShooting()
 		self.ShooterLast=plr
@@ -96,10 +126,10 @@ function ENT:DoShot()
 				Num=1,
 				Src=self.shootPos:GetPos()+self.shootPos:GetAngles():Forward()*10,
 				Dir=self.shootPos:GetAngles():Forward()*1,
-				Spread=Vector(0.02,0.02,0),
+				Spread=Vector(0.015,0.015,0),
 				Tracer=0,
 				Force=2,
-				Damage=18,
+				Damage=25,
 				Attacker=self.Shooter,
 				Callback=function(attacker,trace,dmginfo) 
 					--if CLIENT then
@@ -141,6 +171,8 @@ function ENT:Think()
 		end]]
 		if IsValid(self) then
 			
+            self:EmplacementSetupCheck()
+            
 			if SERVER then
 				self.BasePos=self.turretBase:GetPos()
 				self.OffsetPos=self.turretBase:GetAngles():Up()*1
