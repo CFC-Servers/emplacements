@@ -116,15 +116,15 @@ function ENT:DoShot()
 			effectdata:SetScale( 1 )
 			util.Effect( "MuzzleEffect", effectdata )
 			
-		--elseif SERVER then
 			local variance = math.random( -5, 5 )
 			self:EmitSound( self.ShotSound, 50, 100 + variance )
 			self:EmitSound( "weapons/ar2/fire1.wav", 70, 60 )
 			
-			
 		end
 		
 		if IsValid(self.shootPos) and SERVER then
+			
+			print( self.Shooter )
 			
 			self.shootPos:FireBullets({
 				Num=1,
@@ -133,29 +133,34 @@ function ENT:DoShot()
 				Spread=Vector(0.005,0.005,0),
 				Tracer=0,
 				Force=90,
-				Damage=90,
+				Damage=70,
 				Attacker=self.Shooter,
 				Callback=function(attacker,trace,dmginfo) 
-					--if CLIENT then
 					
-						local concrete = 67
-						local tracerEffect=EffectData()
-						tracerEffect:SetStart(self.shootPos:GetPos())
-						tracerEffect:SetOrigin(trace.HitPos)
-						tracerEffect:SetScale(6000)
-						util.Effect("Tracer",tracerEffect)
-						if(!trace.HitSky) then
-						local effectdata = EffectData()
-						effectdata:SetOrigin(trace.HitPos)
-						effectdata:SetScale(1.2)
-						effectdata:SetRadius( concrete )
-						effectdata:SetNormal(trace.HitNormal)
-						util.Effect("gdcw_universal_impact_t",effectdata)
-						end
-					--end
+					local concrete = 67 -- has to be concrete else errors are spammed
+					local tracerEffect=EffectData()
+					tracerEffect:SetStart(self.shootPos:GetPos())
+					tracerEffect:SetOrigin(trace.HitPos)
+					tracerEffect:SetScale(6000)
+					util.Effect("Tracer",tracerEffect)
+					
+					if trace.HitSky then return end
+					
+					local inflictor = self.Shooter or self
+					util.BlastDamage(self, inflictor, trace.HitPos, 90, 20) -- explosion for anti armour power
+					
+					local effectdata = EffectData()
+					effectdata:SetOrigin(trace.HitPos)
+					effectdata:SetScale(1.25) 
+					effectdata:SetRadius( concrete )
+					effectdata:SetNormal( trace.HitNormal )
+					util.Effect("gdcw_universal_impact_t",effectdata)
+					
+					util.Decal("SmallScorch", trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal) -- decal to communicate that yes, this goes boom
 					
 				end
 			})
+			
 			self:GetPhysicsObject():ApplyForceCenter( self:GetRight()*-10000 )
 			
 			
@@ -163,6 +168,7 @@ function ENT:DoShot()
 		end
 		
 		self.LastShot=CurTime()
+		
 	end
 	
 end
