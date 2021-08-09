@@ -124,8 +124,6 @@ function ENT:DoShot()
 		
 		if IsValid(self.shootPos) and SERVER then
 			
-			print( self.Shooter )
-			
 			self.shootPos:FireBullets({
 				Num=1,
 				Src=self.shootPos:GetPos()+self.shootPos:GetAngles():Up()*10,
