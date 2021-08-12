@@ -1,5 +1,5 @@
 ENT.Type = "anim"
-ENT.Base = "base_anim"
+ENT.Base = "emplacements_turret_base"
 ENT.Category = "Emplacements"
 ENT.PrintName = "14mm Turret"
 ENT.Author = "Wolly/BOT_09"
@@ -11,86 +11,8 @@ ENT.TurretTurnMax = 0.7
 ENT.LastShot = 0
 ENT.ShotInterval = 0.4
 
-function ENT:EmplacementSetupCheck()
-    if self.Setup then return end
-    self.Setup = true
-
-    timer.Simple( 0.2, function()
-        if not IsValid( self ) then return end
-        self.LastShot = CurTime() + 8
-
-        -- Setup sounds
-        if SERVER then
-            self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 )
-
-            timer.Simple( 3, function()
-                if not IsValid( self ) then return end
-                self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
-            end )
-        end
-    end )
-end
-
-function ENT:SetupDataTables()
-    self:DTVar( "Entity", 0, "Shooter" )
-    self:DTVar( "Entity", 1, "ShootPos" )
-end
-
-function ENT:SetShooter( plr )
-    if IsValid( plr ) then
-        plr.CurrentEmplacement = self
-    elseif IsValid( self.Shooter ) then
-        self.Shooter.CurrentEmplacement = nil
-    end
-
-    self.Shooter = plr
-    self:SetDTEntity( 0, plr )
-end
-
-function ENT:GetShooter( plr )
-    if SERVER then
-        return self.Shooter
-    elseif CLIENT then
-        return self:GetDTEntity( 0 )
-    end
-end
-
-function ENT:Use( plr )
-    if not self:ShooterStillValid() then
-        local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
-        if call == false then return end
-
-        if IsValid( plr.CurrentEmplacement ) then
-            if SERVER then
-                -- plays sound on self to remind players this is an intended feature
-                self:EmitSound( "common/wpn_denyselect.wav", 60 )
-            end
-
-            return
-        end
-
-        self:SetShooter( plr )
-        self:StartShooting()
-        self.ShooterLast = plr
-    else
-        if plr == self.Shooter then
-            self:SetShooter( nil )
-            self:FinishShooting()
-        end
-    end
-end
-
-function ENT:ShooterStillValid()
-    local shooter = nil
-
-    if SERVER then
-        shooter = self.Shooter
-    elseif CLIENT then
-        shooter = self:GetDTEntity( 0 )
-    end
-
-    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= 90 )
-end
+ENT.angleInverse = -1
+ENT.angleRotateAroundAxis = -90
 
 function ENT:DoShot()
     if self.LastShot + self.ShotInterval < CurTime() then
@@ -119,7 +41,7 @@ function ENT:DoShot()
                 Force = 90,
                 Damage = 70,
                 Attacker = self.Shooter,
-                Callback = function( attacker, trace, dmginfo )
+                Callback = function( _, trace )
                     local concrete = 67 -- has to be concrete else errors are spammed
                     local tracerEffect = EffectData()
                     tracerEffect:SetStart( self.shootPos:GetPos() )
@@ -143,66 +65,5 @@ function ENT:DoShot()
         end
 
         self.LastShot = CurTime()
-    end
-end
-
-function ENT:Think()
-    if not IsValid( self.turretBase ) and SERVER then
-        SafeRemoveEntity( self )
-    else
-        --[[if IsValid(self.shootPos) or self.shootPos==NULL then
-			if CLIENT then
-				
-				self.shootPos=self:GetDTEntity(1)
-			elseif SERVER then
-				
-				self:SetDTEntity(1,self.shootPos)
-			end
-		end]]
-        if IsValid( self ) then
-            if SERVER then
-                self.BasePos = self.turretBase:GetPos()
-                self.OffsetPos = self.turretBase:GetAngles():Up() * 1
-            end
-
-            self:EmplacementSetupCheck()
-
-            if self:ShooterStillValid() then
-                if SERVER then
-                    local offsetAng = ( self:GetAttachment( self.MuzzleAttachment ).Pos - self:GetDesiredShootPos() ):GetNormal()
-                    local offsetDot = ( self.turretBase:GetAngles():Right() * -1 ):DotProduct( offsetAng )
-
-                    if offsetDot >= self.TurretTurnMax then
-                        local offsetAngNew = offsetAng:Angle()
-                        offsetAngNew:RotateAroundAxis( offsetAngNew:Up(), -90 )
-                        self.OffsetAng = offsetAngNew
-                    end
-                end
-
-                local pressKey = IN_BULLRUSH
-
-                if CLIENT and game.SinglePlayer() then
-                    pressKey = IN_ATTACK
-                end
-
-                self.Firing = self:GetShooter():KeyDown( pressKey )
-            else
-                self.Firing = false
-
-                if SERVER then
-                    self.OffsetAng = self.turretBase:GetAngles()
-                    self:SetShooter( nil )
-                    self:FinishShooting()
-                end
-            end
-
-            if self.Firing then
-                self:DoShot()
-            end
-
-            self:NextThink( CurTime() )
-
-            return true
-        end
     end
 end
