@@ -10,6 +10,8 @@ ENT.TurretModelOffset = Vector( 0, 0, 40 )
 ENT.TurretTurnMax = 0.7
 ENT.LastShot = 0
 ENT.ShotInterval = 0.07
+ENT.spawnSetupTime = 5
+
 ENT.angleInverse = 1
 ENT.angleRotateAroundAxis = 90
 
