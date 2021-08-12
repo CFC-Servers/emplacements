@@ -1,11 +1,10 @@
-
-include("shared.lua")
+include( "shared.lua" )
 
 function ENT:Initialize()
-	self.MuzzleAttachment=self:LookupAttachment("muzzle")
-	self.shootPos=self:GetDTEntity(1)
-	
+    self.MuzzleAttachment = self:LookupAttachment( "muzzle" )
+    self.shootPos = self:GetDTEntity( 1 )
 end
+
 --[[
 ENT.HiddenShooter=false
 function ENT:Think()
@@ -16,9 +15,6 @@ function ENT:Think()
 	end
 	
 end]]
-
 function ENT:Draw()
-	
-	self:DrawModel()
-	
+    self:DrawModel()
 end
