@@ -58,7 +58,7 @@ function ENT:ShooterStillValid()
         shooter = self:GetDTEntity( 0 )
     end
 
-    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= 60 )
+    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= 90 )
 end
 
 function ENT:Use( plr )
