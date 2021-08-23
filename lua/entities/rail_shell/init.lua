@@ -73,11 +73,19 @@ function ENT:Think()
 
             return true
         end
-
+        
+        -- damage equals 400 multiplied by two thirds of this turret's firing speed, then we cut this up for each util.blastdamage
+        local turret = self.Turret
+        local dmgMul = turret.ShotInterval * 0.66
+        local baseDamage = turret.turretBaseDPS * dmgMul
+        
+        local tightDamage = baseDamage * 0.66
+        local wideDamage  = baseDamage * 0.33
+        
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local inflictor = owner or self.Turret
-        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 400, 100 )
-        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 200, 300 )
+        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 550, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
+        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 250, tightDamage )
         local concrete = 67 -- has to be concrete else errors are spammed
         local effectdata = EffectData()
         effectdata:SetOrigin( tr.HitPos ) -- Position of Impact
@@ -88,7 +96,7 @@ function ENT:Think()
         effectdata:SetRadius( concrete ) -- Texture of Impact
         effectdata:SetMagnitude( 16 ) -- Length of explosion trails	
         util.Effect( "gdca_cinematicboom_t", effectdata )
-        util.ScreenShake( tr.HitPos, 10, 5, 1, 1300 )
+        util.ScreenShake( tr.HitPos, 10, 5, 1, 1500 )
         util.Decal( "Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal )
         self:Remove()
     end

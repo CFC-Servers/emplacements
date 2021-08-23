@@ -74,17 +74,23 @@ function ENT:Think()
 
             return true
         end
-
+        
+        -- damage equals 400 multiplied by two thirds of this turret's firing speed
+        local turret = self.Turret
+        local dmgMul = turret.ShotInterval * 0.66
+        local baseDamage = turret.turretBaseDPS * dmgMul
+        
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local inflictor = owner or self.Turret
-        util.BlastDamage( self.Turret, inflictor, self:GetPos(), 350, 90 )
+        util.BlastDamage( self.Turret, inflictor, self:GetPos(), 350, baseDamage )
+        
         local concrete = 67 -- has to be concrete else errors are spammed
         local effectdata = EffectData()
         effectdata:SetOrigin( tr.HitPos ) -- Position of Impact
         effectdata:SetNormal( tr.HitNormal ) -- Direction of Impact
         effectdata:SetStart( self.flightvector:GetNormalized() ) -- Direction of Round
         effectdata:SetEntity( self ) -- Who done it?
-        effectdata:SetScale( 0.6 ) -- Size of explosion
+        effectdata:SetScale( 0.8 ) -- Size of explosion
         effectdata:SetRadius( concrete ) -- Texture of Impact
         effectdata:SetMagnitude( 16 ) -- Length of explosion trails	
         util.Effect( "gdca_airburst_t", effectdata )

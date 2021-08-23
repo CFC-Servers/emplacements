@@ -7,7 +7,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = false
 ENT.TurretFloatHeight = 3
 ENT.TurretModelOffset = Vector( 0, 0, 44 )
-ENT.TurretTurnMax = 0.7
+ENT.TurretTurnMax = 0
 ENT.LastShot = 0
 ENT.ShotInterval = 4.5
 ENT.spawnSetupTime = 8
@@ -27,8 +27,9 @@ function ENT:DoShot()
             effectdata:SetEntity( self )
             effectdata:SetScale( 1 )
             util.Effect( "MuzzleEffect", effectdata )
-            self:EmitSound( self.ShotSound, 50, 100 )
-            self:EmitSound( "npc/sniper/sniper1.wav", 100, 60 )
+            self:EmitSound( self.ShotSound, 50, 100 ) -- hiss
+            self:EmitSound( "npc/sniper/sniper1.wav", 155, 60 ) -- echo
+            self:EmitSound( "weapons/ar2/npc_ar2_altfire.wav", 155, 30 ) -- deep thunk
         end
 
         if IsValid( self.shootPos ) and SERVER then
@@ -38,7 +39,7 @@ function ENT:DoShot()
             nade:Spawn()
             nade:SetOwner( self.Shooter )
             nade.Turret = self
-            self:GetPhysicsObject():ApplyForceCenter( self:GetRight() * -10000 )
+            self:ApplyRecoil( 0.2, 1, -150000 )
         end
 
         self.LastShot = CurTime()

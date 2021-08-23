@@ -9,6 +9,7 @@ ENT.OffsetAng = Angle( 0, 0, 0 )
 ENT.Shooter = nil
 ENT.ShooterLast = nil
 
+ENT.turretBaseDPS = 400 --base DPS of turrets, each turret uses this number differently.
 ENT.turretModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretBaseModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretPos = 0
@@ -118,6 +119,16 @@ function ENT:GetDesiredShootPos()
     local shootTrace = util.TraceLine( playerTrace )
 
     return shootTrace.HitPos
+end
+
+function ENT:ApplyRecoil( randomMul, recoilMul, finalMul )
+    if not self:IsValid() then return end
+    
+    local randomComponent = VectorRand( -1, 1 ) * randomMul
+    local recoilComponent = self:GetRight() * recoilMul 
+    local finalForce      = ( randomComponent + recoilComponent ) * finalMul
+    
+    self:GetPhysicsObject():ApplyForceCenter( finalForce )
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
