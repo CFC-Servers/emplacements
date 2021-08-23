@@ -7,7 +7,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = false
 ENT.TurretFloatHeight = 3
 ENT.TurretModelOffset = Vector( 0, 0, 40 )
-ENT.TurretTurnMax = 0.7
+ENT.TurretTurnMax = 0
 ENT.LastShot = 0
 ENT.ShotInterval = 0.07
 ENT.spawnSetupTime = 5
@@ -32,27 +32,29 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
+            local bulletDamage = self.turretBaseDPS * self.ShotInterval
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Forward() * 10,
                 Dir = self.shootPos:GetAngles():Forward() * 1,
                 Spread = Vector( 0.015, 0.015, 0 ),
                 Tracer = 0,
-                Force = 2,
-                Damage = 25,
+                Force = bulletDamage,
+                Damage = bulletDamage,
                 Attacker = self.Shooter,
                 Callback = function( _, trace )
-                    --if CLIENT then
-                    local tracerEffect = EffectData()
-                    tracerEffect:SetStart( self.shootPos:GetPos() )
-                    tracerEffect:SetOrigin( trace.HitPos )
-                    tracerEffect:SetScale( 6000 )
-                    util.Effect( "GunshipTracer", tracerEffect )
+                
+                local tracerEffect = EffectData()
+                tracerEffect:SetStart( self.shootPos:GetPos() )
+                tracerEffect:SetOrigin( trace.HitPos )
+                tracerEffect:SetScale( self.tracerSpeed )
+                util.Effect( "AirboatGunHeavyTracer", tracerEffect )
+                
                 end
             } )
 
             --end
-            self:GetPhysicsObject():ApplyForceCenter( self:GetRight() * 50000 )
+            self:ApplyRecoil( 0.1, 1, 110000 )
         end
 
         self.LastShot = CurTime()

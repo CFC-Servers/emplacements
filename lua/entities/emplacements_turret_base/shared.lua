@@ -4,6 +4,7 @@ ENT.Spawnable = false
 ENT.spawnSetupTime = 8
 ENT.angleInverse = 1
 ENT.angleRotateAroundAxis = -90
+ENT.tracerSpeed = 12000
 
 function ENT:EmplacementSetupCheck()
     if self.Setup then return end
@@ -58,7 +59,7 @@ function ENT:ShooterStillValid()
         shooter = self:GetDTEntity( 0 )
     end
 
-    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= 90 )
+    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= 110 )
 end
 
 function ENT:Use( plr )
