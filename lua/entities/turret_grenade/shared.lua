@@ -33,6 +33,7 @@ function ENT:DoShot()
 
         if IsValid( self.shootPos ) and SERVER then
             local nade = ents.Create( "turret_40mm_frag" )
+            self:DeleteOnRemove( nade )
             nade:SetPos( self.shootPos:GetPos() )
             nade:SetAngles( self:GetAngles() + Angle( self:GetAngles().p, -90, 0 ) )
             nade:Spawn()
