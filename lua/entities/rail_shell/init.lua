@@ -11,7 +11,7 @@ function ENT:Initialize()
     self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics  	
     self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3		   
     Tracer = ents.Create( "env_spritetrail" )
-    Tracer:SetKeyValue( "lifetime", "0.1" )
+    Tracer:SetKeyValue( "lifetime", "0.2" )
     Tracer:SetKeyValue( "startwidth", "90" )
     Tracer:SetKeyValue( "endwidth", "15" )
     Tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
@@ -78,21 +78,22 @@ function ENT:Think()
         local turret = self.Turret
         local dmgMul = turret.ShotInterval * 0.66
         local baseDamage = turret.turretBaseDPS * dmgMul
+        local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
         
         local tightDamage = baseDamage * 0.66
         local wideDamage  = baseDamage * 0.33
         
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local inflictor = owner or self.Turret
-        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 550, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
-        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 250, tightDamage )
+        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 450, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
+        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 200, tightDamage )
         local concrete = 67 -- has to be concrete else errors are spammed
         local effectdata = EffectData()
         effectdata:SetOrigin( tr.HitPos ) -- Position of Impact
-        effectdata:SetNormal( tr.HitNormal ) -- Direction of Impact
+        effectdata:SetNormal( effectDir ) -- Direction of Impact
         effectdata:SetStart( self.flightvector:GetNormalized() ) -- Direction of Round
         effectdata:SetEntity( self ) -- Who done it?
-        effectdata:SetScale( 2.2 ) -- Size of explosion
+        effectdata:SetScale( 2 ) -- Size of explosion
         effectdata:SetRadius( concrete ) -- Texture of Impact
         effectdata:SetMagnitude( 16 ) -- Length of explosion trails	
         util.Effect( "gdca_cinematicboom_t", effectdata )
