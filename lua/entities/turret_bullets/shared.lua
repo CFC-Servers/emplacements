@@ -10,13 +10,13 @@ ENT.TurretModelOffset = Vector( 0, 0, 40 )
 ENT.TurretTurnMax = 0
 ENT.LastShot = 0
 ENT.ShotInterval = 0.07
-ENT.spawnSetupTime = 5
+ENT.longSpawnSetup = false
 
 ENT.angleInverse = 1
 ENT.angleRotateAroundAxis = 90
 
 function ENT:DoShot()
-    if self.LastShot + self.ShotInterval < CurTime() then
+    if self.LastShot + self.ShotInterval < CurTime() and self.doneSetup then
         if SERVER then
             local effectPosAng = self:GetAttachment( self.MuzzleAttachment )
             local vPoint = effectPosAng.Pos
@@ -32,7 +32,7 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local bulletDamage = self.turretBaseDPS * self.ShotInterval
+            local bulletDamage = 400 * self.ShotInterval -- ensuring dps of 400
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Forward() * 10,
@@ -47,8 +47,9 @@ function ENT:DoShot()
                 local tracerEffect = EffectData()
                 tracerEffect:SetStart( self.shootPos:GetPos() )
                 tracerEffect:SetOrigin( trace.HitPos )
-                tracerEffect:SetScale( self.tracerSpeed )
-                util.Effect( "AirboatGunHeavyTracer", tracerEffect )
+                tracerEffect:SetScale( 20000 ) --pretty fast
+                
+                util.Effect( "StriderTracer", tracerEffect ) -- big but not too big effect
                 
                 end
             } )

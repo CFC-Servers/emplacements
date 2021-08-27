@@ -10,13 +10,13 @@ ENT.TurretModelOffset = Vector( 0, 0, 44 )
 ENT.TurretTurnMax = 0
 ENT.LastShot = 0
 ENT.ShotInterval = 0.4
-ENT.spawnSetupTime = 8
+ENT.longSpawnSetup = true 
 
 ENT.angleInverse = -1
 ENT.angleRotateAroundAxis = -90
 
 function ENT:DoShot()
-    if self.LastShot + self.ShotInterval < CurTime() then
+    if self.LastShot + self.ShotInterval < CurTime() and self.doneSetup then
         if SERVER then
             local effectPosAng = self:GetAttachment( self.MuzzleAttachment )
             local vPoint = effectPosAng.Pos
@@ -25,7 +25,7 @@ function ENT:DoShot()
             effectdata:SetOrigin( vPoint )
             effectdata:SetAngles( effectPosAng.Ang + Angle( 0, -90, 0 ) )
             effectdata:SetEntity( self )
-            effectdata:SetScale( 1 )
+            effectdata:SetScale( 1.6 )
             util.Effect( "MuzzleEffect", effectdata )
             local variance = math.random( -3, 3 )
             self:EmitSound( self.ShotSound, 50, 100 + variance )
@@ -33,8 +33,8 @@ function ENT:DoShot()
         end
         
         if IsValid( self.shootPos ) and SERVER then
-            local fullDamage = self.turretBaseDPS * self.ShotInterval
-            local bulletDamage = fullDamage * 0.66
+            local fullDamage = 400 * self.ShotInterval -- ensuring dps of 400
+            local bulletDamage = fullDamage * 0.66 --cutting up damage into two components
             local explosiveDamage = fullDamage * 0.33
             self.shootPos:FireBullets( {
                 Num = 1,
@@ -50,8 +50,9 @@ function ENT:DoShot()
                     local tracerEffect = EffectData()
                     tracerEffect:SetStart( self.shootPos:GetPos() )
                     tracerEffect:SetOrigin( trace.HitPos )
-                    tracerEffect:SetScale( self.tracerSpeed ) 
-                    util.Effect( "Tracer", tracerEffect )
+                    tracerEffect:SetScale( 40000 ) -- usain bolt speed
+                    
+                    util.Effect( "AirboatGunHeavyTracer", tracerEffect ) -- BIG effect
                     if trace.HitSky then return end
                     
                     local inflictor = self.Shooter or self

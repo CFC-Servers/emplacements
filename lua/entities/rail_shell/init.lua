@@ -74,26 +74,27 @@ function ENT:Think()
             return true
         end
         
-        -- damage equals 400 multiplied by two thirds of this turret's firing speed, then we cut this up for each util.blastdamage
-        local turret = self.Turret
-        local dmgMul = turret.ShotInterval * 0.66
-        local baseDamage = turret.turretBaseDPS * dmgMul
+        -- damage equals 400 multipled by a bit less than the firing interval
+        local baseDamage = 1188
         local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
         
-        local tightDamage = baseDamage * 0.66
+        local tightDamage = baseDamage * 0.66 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
         local wideDamage  = baseDamage * 0.33
         
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-        local inflictor = owner or self.Turret
-        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 450, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
-        util.BlastDamage( self.Turret, inflictor, tr.HitPos, 200, tightDamage )
+        local attacker = owner or self.Turret or self
+        local inflictor = self.Turret or self -- makes shell work if spawned standalone
+        
+        util.BlastDamage( inflictor, attacker, tr.HitPos, 500, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
+        util.BlastDamage( inflictor, attacker, tr.HitPos, 200, tightDamage )
+        
         local concrete = 67 -- has to be concrete else errors are spammed
         local effectdata = EffectData()
         effectdata:SetOrigin( tr.HitPos ) -- Position of Impact
         effectdata:SetNormal( effectDir ) -- Direction of Impact
         effectdata:SetStart( self.flightvector:GetNormalized() ) -- Direction of Round
         effectdata:SetEntity( self ) -- Who done it?
-        effectdata:SetScale( 2 ) -- Size of explosion
+        effectdata:SetScale( 2.1 ) -- Size of explosion
         effectdata:SetRadius( concrete ) -- Texture of Impact
         effectdata:SetMagnitude( 16 ) -- Length of explosion trails	
         util.Effect( "gdca_cinematicboom_t", effectdata )

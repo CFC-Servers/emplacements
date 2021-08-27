@@ -3,8 +3,7 @@ AddCSLuaFile( "shared.lua" )
 include( "shared.lua" )
 
 function ENT:Initialize()
-    --self.flightvector = self:GetForward() * 40
-    self.flightvector = nil
+    self.flightvector = self:GetForward() * 35 -- valid default flight vector incase shell is spawned standalone
     self.timeleft = CurTime() + 15
     self.AirburstTime = CurTime() + 15
     self:SetModel( "models/items/ar2_grenade.mdl" )
@@ -48,7 +47,7 @@ function ENT:Think()
         util.Effect( "gdca_airburst_t", effectdata )
         self:Remove()
     end
-
+    
     local trace = {}
     trace.start = self:GetPos()
     trace.endpos = self:GetPos() + self.flightvector
@@ -76,13 +75,13 @@ function ENT:Think()
         end
         
         -- damage equals 400 multiplied by two thirds of this turret's firing speed
-        local turret = self.Turret
-        local dmgMul = turret.ShotInterval * 0.66
-        local baseDamage = turret.turretBaseDPS * dmgMul
+        local baseDamage = 185
         
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-        local inflictor = owner or self.Turret
-        util.BlastDamage( self.Turret, inflictor, self:GetPos(), 350, baseDamage )
+        local attacker = owner or self.Turret or self
+        local inflictor = self.Turret or self -- makes shell work if spawned standalone        
+        
+        util.BlastDamage( inflictor, attacker, self:GetPos(), 350, baseDamage )
         
         local concrete = 67 -- has to be concrete else errors are spammed
         local effectdata = EffectData()

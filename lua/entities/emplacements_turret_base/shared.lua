@@ -4,26 +4,41 @@ ENT.Spawnable = false
 ENT.spawnSetupTime = 8
 ENT.angleInverse = 1
 ENT.angleRotateAroundAxis = -90
-ENT.tracerSpeed = 12000
 
 function ENT:EmplacementSetupCheck()
-    if self.Setup then return end
-    self.Setup = true
-
+    if not IsValid( self ) then return end
+    if self.setup then return end
+    self.setup = true
+    
     timer.Simple( 0.2, function()
         if not IsValid( self ) then return end
-        self.LastShot = CurTime() + self.spawnSetupTime
-
-        -- Setup sounds
-        if SERVER then
-            self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 )
-
-            timer.Simple( 3, function()
-                if not IsValid( self ) then return end
-                self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
-            end )
-        end
+        
+        --setup variable
+        local finalizeSoundTime = 0.1
+        local setupTime = 4
+        
+        
+        if self.longSpawnSetup then
+            finalizeSoundTime = 4
+            setupTime = 9
+            if not SERVER then return end
+            self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 ) -- this sound plays before the final sound so that the gun isn't just sitting there doing nothing
+            
+        end 
+        timer.Simple( finalizeSoundTime, function()
+            if not IsValid( self ) then return end
+            if not SERVER then return end
+            self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
+            
+        end )
+        
+        timer.Simple( setupTime, function() 
+            if not IsValid( self ) then return end
+            self.doneSetup = true
+            
+        end )
     end )
+    
 end
 
 function ENT:SetupDataTables()
@@ -62,79 +77,93 @@ function ENT:ShooterStillValid()
     return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= 110 )
 end
 
+function ENT:EmplacementDisconnect() 
+    self.Firing = false
+    self:SetShooter( nil )
+    self:FinishShooting()
+
+end
+
+function ENT:EmplacementConnect( plr )
+    if self.Shooter then return end -- run these once
+    self:SetShooter( plr )
+    self:StartShooting()
+    self.ShooterLast = plr
+    
+end
+
 function ENT:Use( plr )
     if not self:ShooterStillValid() then
         local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
         if call == false then return end
 
         if IsValid( plr.CurrentEmplacement ) then
-            if SERVER then
-                -- plays sound on self to remind players this is an intended feature
-                self:EmitSound( "common/wpn_denyselect.wav", 60 )
-            end
-
-            return
+            plr.CurrentEmplacement:EmplacementDisconnect() -- hotswap emplacements! feels much better than being denied
+            
         end
-
-        self:SetShooter( plr )
-        self:StartShooting()
-        self.ShooterLast = plr
+        
+        self:EmplacementConnect( plr )
+        
     else
         if plr == self.Shooter then
-            self:SetShooter( nil )
-            self:FinishShooting()
+            self:EmplacementDisconnect()
         end
     end
 end
 
 function ENT:Think()
-    if not IsValid( self.turretBase ) and SERVER then
+    if not IsValid( self.turretBase ) then
+        if not SERVER then return end
         SafeRemoveEntity( self )
     else
-        if IsValid( self ) then
-            if SERVER then
-                self.BasePos = self.turretBase:GetPos()
-                self.OffsetPos = self.turretBase:GetAngles():Up() * 1
-            end
-
-            self:EmplacementSetupCheck()
-
-            if self:ShooterStillValid() then
-                if SERVER then
-                    local offsetAng = ( self:GetAttachment( self.MuzzleAttachment ).Pos - self:GetDesiredShootPos() ):GetNormal()
-                    local offsetDot = ( self.turretBase:GetAngles():Right() * self.angleInverse ):Dot( offsetAng )
-
-                    if offsetDot >= self.TurretTurnMax then
-                        local offsetAngNew = offsetAng:Angle()
-                        offsetAngNew:RotateAroundAxis( offsetAngNew:Up(), self.angleRotateAroundAxis )
-                        self.OffsetAng = offsetAngNew
-                    end
-                end
-
-                local pressKey = IN_BULLRUSH
-
-                if CLIENT and game.SinglePlayer() then
-                    pressKey = IN_ATTACK
-                end
-
-                self.Firing = self:GetShooter():KeyDown( pressKey )
-            else
-                self.Firing = false
-
-                if SERVER then
-                    self.OffsetAng = self.turretBase:GetAngles()
-                    self:SetShooter( nil )
-                    self:FinishShooting()
-                end
-            end
-
-            if self.Firing then
-                self:DoShot()
-            end
-
-            self:NextThink( CurTime() )
-
-            return true
+        if not IsValid( self ) and IsValid( self.turretBase ) then return end
+        if SERVER then
+            self.BasePos = self.turretBase:GetPos()
+            self.OffsetPos = self.turretBase:GetAngles():Up() * 1
+            
         end
+        
+        self:EmplacementSetupCheck()
+
+        if self:ShooterStillValid() then
+            if not self.doneSetup then 
+                self.OffsetAng = self.turretBase:GetAngles() -- makes emplacement not aim when its setting up
+                --todo, replace this with slower aiming instead
+            return end 
+            
+            if SERVER then
+                local offsetAng = ( self:GetAttachment( self.MuzzleAttachment ).Pos - self:GetDesiredShootPos() ):GetNormal()
+                local offsetDot = ( self.turretBase:GetAngles():Right() * self.angleInverse ):Dot( offsetAng )
+                if offsetDot >= self.TurretTurnMax then
+                    local offsetAngNew = offsetAng:Angle()
+                    offsetAngNew:RotateAroundAxis( offsetAngNew:Up(), self.angleRotateAroundAxis )
+                    self.OffsetAng = offsetAngNew
+                end
+            end
+
+            local pressKey = IN_BULLRUSH
+
+            if CLIENT and game.SinglePlayer() then
+                pressKey = IN_ATTACK
+            end
+
+            self.Firing = self:GetShooter():KeyDown( pressKey )
+            
+        else
+            if not SERVER then return end
+            self.OffsetAng = self.turretBase:GetAngles()
+            if not self.Shooter then return end -- run this function once
+            self:EmplacementDisconnect()
+            
+        end
+
+        if self.Firing then
+            self:DoShot()
+            
+        end
+
+        self:NextThink( CurTime() )
+
+        return true
     end
 end

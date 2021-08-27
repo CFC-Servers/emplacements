@@ -10,13 +10,13 @@ ENT.TurretModelOffset = Vector( 0, 0, 44 )
 ENT.TurretTurnMax = 0
 ENT.LastShot = 0
 ENT.ShotInterval = 0.7
-ENT.spawnSetupTime = 8
+ENT.longSpawnSetup = true 
 
 ENT.angleInverse = -1
 ENT.angleRotateAroundAxis = -90
 
 function ENT:DoShot()
-    if self.LastShot + self.ShotInterval < CurTime() then
+    if self.LastShot + self.ShotInterval < CurTime() and self.doneSetup then
         if SERVER then
             local effectPosAng = self:GetAttachment( self.MuzzleAttachment )
             local vPoint = effectPosAng.Pos
