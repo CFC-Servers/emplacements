@@ -9,7 +9,6 @@ ENT.OffsetAng = Angle( 0, 0, 0 )
 ENT.Shooter = nil
 ENT.ShooterLast = nil
 
-ENT.turretBaseDPS = 400 --base DPS of turrets, each turret uses this number differently.
 ENT.turretModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretBaseModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretPos = 0
@@ -133,6 +132,7 @@ end
 
 function ENT:PhysicsSimulate( phys, deltatime )
     phys:Wake()
+    if not IsValid( self.turretBase ) then return end
     self.ShadowParams.secondstoarrive = 0.01
     self.ShadowParams.pos = self.BasePos + self.turretBase:GetUp() * self.turretPos
     self.ShadowParams.angle = self.BaseAng + self.OffsetAng + Angle( 0, 0, 0 )
