@@ -17,25 +17,22 @@ function ENT:EmplacementSetupCheck()
         local finalizeSoundTime = 0.1
         local setupTime = 4
         
-        
         if self.longSpawnSetup then
             finalizeSoundTime = 4
             setupTime = 9
             if not SERVER then return end
             self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 ) -- this sound plays before the final sound so that the gun isn't just sitting there doing nothing
-            
         end 
+
         timer.Simple( finalizeSoundTime, function()
             if not IsValid( self ) then return end
             if not SERVER then return end
             self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
-            
         end )
         
         timer.Simple( setupTime, function() 
             if not IsValid( self ) then return end
             self.doneSetup = true
-            
         end )
     end )
     
@@ -79,13 +76,13 @@ end
 
 function ENT:EmplacementDisconnect() 
     self.Firing = false
-    self:SetShooter( nil )
+    self:SetShooter()
     self:FinishShooting()
 
 end
 
 function ENT:EmplacementConnect( plr )
-    if self.Shooter then return end -- run these once
+    if self.Shooter then return end
     self:SetShooter( plr )
     self:StartShooting()
     self.ShooterLast = plr
@@ -113,14 +110,13 @@ end
 
 function ENT:Think()
     if not IsValid( self.turretBase ) then
-        if not SERVER then return end
-        SafeRemoveEntity( self )
+        if SERVER then SafeRemoveEntity( self ) end
+        return nil
     else
         if not IsValid( self ) and IsValid( self.turretBase ) then return end
         if SERVER then
             self.BasePos = self.turretBase:GetPos()
-            self.OffsetPos = self.turretBase:GetAngles():Up() * 1
-            
+            self.OffsetPos = self.turretBase:GetAngles():Up()
         end
         
         self:EmplacementSetupCheck()
@@ -128,7 +124,7 @@ function ENT:Think()
         if self:ShooterStillValid() then
             if not self.doneSetup then 
                 self.OffsetAng = self.turretBase:GetAngles() -- makes emplacement not aim when its setting up
-                --todo, replace this with slower aiming instead
+                -- TODO: replace this with slower aiming instead
             return end 
             
             if SERVER then
@@ -154,7 +150,6 @@ function ENT:Think()
             self.OffsetAng = self.turretBase:GetAngles()
             if not self.Shooter then return end -- run this function once
             self:EmplacementDisconnect()
-            
         end
 
         if self.Firing then
