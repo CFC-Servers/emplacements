@@ -70,7 +70,7 @@ function ENT:ShooterStillValid()
     elseif CLIENT then
         shooter = self:GetDTEntity( 0 )
     end
-    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= self.EmplacementDisconnectRange )
+    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= self.emplacementDisconnectRange )
     
 end
 
