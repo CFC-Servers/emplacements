@@ -13,6 +13,7 @@ ENT.turretModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretBaseModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretPos = 0
 ENT.turretInitialAngle = 0
+ENT.emplacementDisconnectRange = 110
 
 ENT.soundName = "sound_name"
 ENT.soundPath = "soundfile.wav"
