@@ -70,7 +70,14 @@ function ENT:ShooterStillValid()
     elseif CLIENT then
         shooter = self:GetDTEntity( 0 )
     end
-    return IsValid( shooter ) and shooter:Alive() and ( ( self:GetPos() + self.TurretModelOffset ):Distance( shooter:GetShootPos() ) <= self.emplacementDisconnectRange )
+    local shooterIsValid = IsValid( shooter ) and shooter:Alive()
+    if not shooterIsValid then return false end
+
+    local originPos = self:GetPos() + self.TurretModelOffset
+    local maxDistanceSqr = self.emplacementDisconnectRange * self.emplacementDisconnectRange
+    local distanceSqr = originPos:DistToSqr( shooter:GetShootPos() )
+    
+    return distanceSqr <= maxDistanceSqr
     
 end
 
@@ -125,15 +132,17 @@ function ENT:Think()
             if not self.doneSetup then 
                 self.OffsetAng = self.turretBase:GetAngles() -- makes emplacement not aim when its setting up
                 -- TODO: replace this with slower aiming instead
-            return end 
+                return
+            end 
             
             if SERVER then
-                local offsetAng = ( self:GetAttachment( self.MuzzleAttachment ).Pos - self:GetDesiredShootPos() ):GetNormal()
+                local muzzlePos = self:GetAttachment( self.MuzzleAttachment ).Pos
+                local offsetAng = ( muzzlePos - self:GetDesiredShootPos() ):GetNormal()
                 local offsetDot = ( self.turretBase:GetAngles():Right() * self.angleInverse ):Dot( offsetAng )
+
                 if offsetDot >= self.TurretTurnMax then
-                    local offsetAngNew = offsetAng:Angle()
-                    offsetAngNew:RotateAroundAxis( offsetAngNew:Up(), self.angleRotateAroundAxis )
-                    self.OffsetAng = offsetAngNew
+                    self.OffsetAng = offsetAng:Angle()
+                    offsetAngNew:RotateAroundAxis( self.OffsetAng:Up(), self.angleRotateAroundAxis )
                 end
             end
 
