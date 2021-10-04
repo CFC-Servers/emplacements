@@ -90,6 +90,10 @@ end
 
 function ENT:EmplacementConnect( plr )
     if self.Shooter then return end
+    
+    local canNotConnect = hook.Run( "Emplacements_PlayerConnect", self, ply )
+    if canNotConnect ~= nil then return end
+    
     self:SetShooter( plr )
     self:StartShooting()
     self.ShooterLast = plr
@@ -142,7 +146,7 @@ function ENT:Think()
 
                 if offsetDot >= self.TurretTurnMax then
                     self.OffsetAng = offsetAng:Angle()
-                    offsetAngNew:RotateAroundAxis( self.OffsetAng:Up(), self.angleRotateAroundAxis )
+                    self.OffsetAng:RotateAroundAxis( self.OffsetAng:Up(), self.angleRotateAroundAxis )
                 end
             end
 
