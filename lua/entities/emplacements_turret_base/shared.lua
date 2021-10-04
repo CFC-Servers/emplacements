@@ -91,8 +91,8 @@ end
 function ENT:EmplacementConnect( plr )
     if self.Shooter then return end
     
-    local canNotConnect = hook.Run( "Emplacements_PlayerConnect", self, ply )
-    if canNotConnect ~= nil then return end
+    local canConnect = hook.Run( "Emplacements_PlayerConnect", self, ply )
+    if canConnect == false then return end
     
     self:SetShooter( plr )
     self:StartShooting()
