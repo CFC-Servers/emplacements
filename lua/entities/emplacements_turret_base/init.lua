@@ -146,3 +146,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
     self.ShadowParams.deltatime = deltatime
     phys:ComputeShadowControl( self.ShadowParams )
 end
+
+function ENT:GravGunPickupAllowed()
+    return false
+end
