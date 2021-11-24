@@ -43,14 +43,14 @@ function ENT:DoShot()
                 Damage = bulletDamage,
                 Attacker = self.Shooter,
                 Callback = function( _, trace )
-                
+
                 local tracerEffect = EffectData()
                 tracerEffect:SetStart( self.shootPos:GetPos() )
                 tracerEffect:SetOrigin( trace.HitPos )
                 tracerEffect:SetScale( 20000 ) --pretty fast
-                
+
                 util.Effect( "StriderTracer", tracerEffect ) -- big but not too big effect
-                
+
                 end
             } )
 

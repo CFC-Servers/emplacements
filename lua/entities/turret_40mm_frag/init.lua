@@ -47,7 +47,7 @@ function ENT:Think()
         util.Effect( "gdca_airburst_t", effectdata )
         self:Remove()
     end
-    
+
     local trace = {}
     trace.start = self:GetPos()
     trace.endpos = self:GetPos() + self.flightvector
@@ -73,16 +73,16 @@ function ENT:Think()
 
             return true
         end
-        
+
         -- damage equals 400 multiplied by two thirds of this turret's firing speed
         local baseDamage = 185
-        
+
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local attacker = owner or self.Turret or self
         local inflictor = self.Turret or self -- makes shell work if spawned standalone        
-        
+
         util.BlastDamage( inflictor, attacker, self:GetPos(), 350, baseDamage )
-        
+
         local concrete = 67 -- has to be concrete else errors are spammed
         local effectdata = EffectData()
         effectdata:SetOrigin( tr.HitPos ) -- Position of Impact

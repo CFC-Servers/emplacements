@@ -9,33 +9,32 @@ function ENT:EmplacementSetupCheck()
     if not IsValid( self ) then return end
     if self.setup then return end
     self.setup = true
-    
+
     timer.Simple( 0.2, function()
         if not IsValid( self ) then return end
-        
+
         --setup variable
         local finalizeSoundTime = 0.1
         local setupTime = 4
-        
+
         if self.longSpawnSetup then
             finalizeSoundTime = 4
             setupTime = 9
             if not SERVER then return end
             self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 ) -- this sound plays before the final sound so that the gun isn't just sitting there doing nothing
-        end 
+        end
 
         timer.Simple( finalizeSoundTime, function()
             if not IsValid( self ) then return end
             if not SERVER then return end
             self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
         end )
-        
+
         timer.Simple( setupTime, function() 
             if not IsValid( self ) then return end
             self.doneSetup = true
         end )
     end )
-    
 end
 
 function ENT:SetupDataTables()
@@ -76,9 +75,8 @@ function ENT:ShooterStillValid()
     local originPos = self:GetPos() + self.TurretModelOffset
     local maxDistanceSqr = self.emplacementDisconnectRange * self.emplacementDisconnectRange
     local distanceSqr = originPos:DistToSqr( shooter:GetShootPos() )
-    
+
     return distanceSqr <= maxDistanceSqr
-    
 end
 
 function ENT:EmplacementDisconnect() 
@@ -90,14 +88,13 @@ end
 
 function ENT:EmplacementConnect( plr )
     if self.Shooter then return end
-    
+
     local canConnect = hook.Run( "Emplacements_PlayerConnect", self, ply )
     if canConnect == false then return end
-    
+
     self:SetShooter( plr )
     self:StartShooting()
     self.ShooterLast = plr
-    
 end
 
 function ENT:Use( plr )
@@ -107,11 +104,8 @@ function ENT:Use( plr )
 
         if IsValid( plr.CurrentEmplacement ) then
             plr.CurrentEmplacement:EmplacementDisconnect() -- hotswap emplacements! feels much better than being denied
-            
         end
-        
         self:EmplacementConnect( plr )
-        
     else
         if plr == self.Shooter then
             self:EmplacementDisconnect()
@@ -129,7 +123,7 @@ function ENT:Think()
             self.BasePos = self.turretBase:GetPos()
             self.OffsetPos = self.turretBase:GetAngles():Up()
         end
-        
+
         self:EmplacementSetupCheck()
 
         if self:ShooterStillValid() then
@@ -157,7 +151,6 @@ function ENT:Think()
             end
 
             self.Firing = self:GetShooter():KeyDown( pressKey )
-            
         else
             if not SERVER then return end
             self.OffsetAng = self.turretBase:GetAngles()
@@ -167,7 +160,6 @@ function ENT:Think()
 
         if self.Firing then
             self:DoShot()
-            
         end
 
         self:NextThink( CurTime() )

@@ -123,11 +123,11 @@ end
 
 function ENT:ApplyRecoil( randomMul, recoilMul, finalMul )
     if not self:IsValid() then return end
-    
+
     local randomComponent = VectorRand( -1, 1 ) * randomMul
     local recoilComponent = self:GetRight() * recoilMul 
     local finalForce      = ( randomComponent + recoilComponent ) * finalMul
-    
+
     self:GetPhysicsObject():ApplyForceCenter( finalForce )
 end
 
