@@ -7,9 +7,9 @@ function ENT:Initialize()
     self.timeleft = CurTime() + 15
     self.AirburstTime = CurTime() + 15
     self:SetModel( "models/items/ar2_grenade.mdl" )
-    self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,  	
-    self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics  	
-    self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3		   
+    self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,
+    self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
+    self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
     Tracer = ents.Create( "env_spritetrail" )
     Tracer:SetKeyValue( "lifetime", "0.3" )
     Tracer:SetKeyValue( "startwidth", "32" )
@@ -79,7 +79,7 @@ function ENT:Think()
 
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local attacker = owner or self.Turret or self
-        local inflictor = self.Turret or self -- makes shell work if spawned standalone        
+        local inflictor = self.Turret or self -- makes shell work if spawned standalone
 
         util.BlastDamage( inflictor, attacker, self:GetPos(), 350, baseDamage )
 
@@ -91,7 +91,7 @@ function ENT:Think()
         effectdata:SetEntity( self ) -- Who done it?
         effectdata:SetScale( 0.8 ) -- Size of explosion
         effectdata:SetRadius( concrete ) -- Texture of Impact
-        effectdata:SetMagnitude( 16 ) -- Length of explosion trails	
+        effectdata:SetMagnitude( 16 ) -- Length of explosion trails
         util.Effect( "gdca_airburst_t", effectdata )
         util.ScreenShake( tr.HitPos, 10, 5, 1, 1300 )
         util.Decal( "Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal )

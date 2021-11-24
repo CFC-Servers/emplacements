@@ -7,9 +7,9 @@ function ENT:Initialize()
     self.timeleft = CurTime() + 5
     self.AirburstTime = CurTime() + 5
     self:SetModel( "models/weapons/w_missile_closed.mdl" )
-    self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,  	
-    self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics  	
-    self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3		   
+    self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,
+    self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
+    self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
     Tracer = ents.Create( "env_spritetrail" )
     Tracer:SetKeyValue( "lifetime", "0.2" )
     Tracer:SetKeyValue( "startwidth", "90" )
@@ -96,7 +96,7 @@ function ENT:Think()
         effectdata:SetEntity( self ) -- Who done it?
         effectdata:SetScale( 2.1 ) -- Size of explosion
         effectdata:SetRadius( concrete ) -- Texture of Impact
-        effectdata:SetMagnitude( 16 ) -- Length of explosion trails	
+        effectdata:SetMagnitude( 16 ) -- Length of explosion trails
         util.Effect( "gdca_cinematicboom_t", effectdata )
         util.ScreenShake( tr.HitPos, 10, 5, 1, 1500 )
         util.Decal( "Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal )

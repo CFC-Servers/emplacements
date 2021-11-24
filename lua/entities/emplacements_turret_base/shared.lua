@@ -30,7 +30,7 @@ function ENT:EmplacementSetupCheck()
             self:EmitSound( "weapons/ar2/npc_ar2_reload.wav", 70, 50 )
         end )
 
-        timer.Simple( setupTime, function() 
+        timer.Simple( setupTime, function()
             if not IsValid( self ) then return end
             self.doneSetup = true
         end )
@@ -79,7 +79,7 @@ function ENT:ShooterStillValid()
     return distanceSqr <= maxDistanceSqr
 end
 
-function ENT:EmplacementDisconnect() 
+function ENT:EmplacementDisconnect()
     self.Firing = false
     self:SetShooter()
     self:FinishShooting()
@@ -127,12 +127,12 @@ function ENT:Think()
         self:EmplacementSetupCheck()
 
         if self:ShooterStillValid() then
-            if not self.doneSetup then 
+            if not self.doneSetup then
                 self.OffsetAng = self.turretBase:GetAngles() -- makes emplacement not aim when its setting up
                 -- TODO: replace this with slower aiming instead
                 return
-            end 
-            
+            end
+
             if SERVER then
                 local muzzlePos = self:GetAttachment( self.MuzzleAttachment ).Pos
                 local offsetAng = ( muzzlePos - self:GetDesiredShootPos() ):GetNormal()
