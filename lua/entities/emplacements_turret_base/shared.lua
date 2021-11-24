@@ -32,6 +32,7 @@ function ENT:EmplacementSetupCheck()
 
         timer.Simple( setupTime, function()
             if not IsValid( self ) then return end
+            self:EmitSound( "weapons/ar2/ar2_reload_push.wav", 150, 100 )
             self.doneSetup = true
         end )
     end )
@@ -98,6 +99,10 @@ function ENT:EmplacementConnect( plr )
 end
 
 function ENT:Use( plr )
+    if not self.doneSetup then
+        plr:PrintMessage( 4, "The emplacement is still setting up!")
+    end
+
     if not self:ShooterStillValid() then
         local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
         if call == false then return end
