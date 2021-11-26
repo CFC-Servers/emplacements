@@ -23,7 +23,7 @@ function ENT:Initialize()
     self:PhysicsInit( SOLID_VPHYSICS )
     self:SetMoveType( MOVETYPE_VPHYSICS )
     self:SetSolid( SOLID_VPHYSICS )
-    self:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
+    self:SetCollisionGroup( COLLISION_GROUP_WEAPON )
     local phys = self:GetPhysicsObject()
 
     if IsValid( phys ) then
@@ -123,11 +123,11 @@ end
 
 function ENT:ApplyRecoil( randomMul, recoilMul, finalMul )
     if not self:IsValid() then return end
-    
+
     local randomComponent = VectorRand( -1, 1 ) * randomMul
-    local recoilComponent = self:GetRight() * recoilMul 
+    local recoilComponent = self:GetRight() * recoilMul
     local finalForce      = ( randomComponent + recoilComponent ) * finalMul
-    
+
     self:GetPhysicsObject():ApplyForceCenter( finalForce )
 end
 

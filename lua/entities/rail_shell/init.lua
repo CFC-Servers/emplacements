@@ -7,9 +7,9 @@ function ENT:Initialize()
     self.timeleft = CurTime() + 5
     self.AirburstTime = CurTime() + 5
     self:SetModel( "models/weapons/w_missile_closed.mdl" )
-    self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,  	
-    self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics  	
-    self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3		   
+    self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,
+    self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
+    self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
     Tracer = ents.Create( "env_spritetrail" )
     Tracer:SetKeyValue( "lifetime", "0.2" )
     Tracer:SetKeyValue( "startwidth", "90" )
@@ -73,21 +73,21 @@ function ENT:Think()
 
             return true
         end
-        
+
         -- damage equals 400 multipled by a bit less than the firing interval
         local baseDamage = 1188
         local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
-        
+
         local tightDamage = baseDamage * 0.66 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
         local wideDamage  = baseDamage * 0.33
-        
+
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local attacker = owner or self.Turret or self
         local inflictor = self.Turret or self -- makes shell work if spawned standalone
-        
+
         util.BlastDamage( inflictor, attacker, tr.HitPos, 500, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
         util.BlastDamage( inflictor, attacker, tr.HitPos, 200, tightDamage )
-        
+
         local concrete = 67 -- has to be concrete else errors are spammed
         local effectdata = EffectData()
         effectdata:SetOrigin( tr.HitPos ) -- Position of Impact
@@ -96,7 +96,7 @@ function ENT:Think()
         effectdata:SetEntity( self ) -- Who done it?
         effectdata:SetScale( 2.1 ) -- Size of explosion
         effectdata:SetRadius( concrete ) -- Texture of Impact
-        effectdata:SetMagnitude( 16 ) -- Length of explosion trails	
+        effectdata:SetMagnitude( 16 ) -- Length of explosion trails
         util.Effect( "gdca_cinematicboom_t", effectdata )
         util.ScreenShake( tr.HitPos, 10, 5, 1, 1500 )
         util.Decal( "Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal )

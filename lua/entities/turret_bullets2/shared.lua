@@ -10,7 +10,7 @@ ENT.TurretModelOffset = Vector( 0, 0, 44 )
 ENT.TurretTurnMax = 0
 ENT.LastShot = 0
 ENT.ShotInterval = 0.4
-ENT.longSpawnSetup = true 
+ENT.longSpawnSetup = true
 
 ENT.angleInverse = -1
 ENT.angleRotateAroundAxis = -90
@@ -31,7 +31,7 @@ function ENT:DoShot()
             self:EmitSound( self.ShotSound, 50, 100 + variance )
             self:EmitSound( "weapons/ar2/fire1.wav", 70, 60 + variance )
         end
-        
+
         if IsValid( self.shootPos ) and SERVER then
             local fullDamage = 400 * self.ShotInterval -- ensuring dps of 400
             local bulletDamage = fullDamage * 0.66 --cutting up damage into two components
@@ -51,10 +51,10 @@ function ENT:DoShot()
                     tracerEffect:SetStart( self.shootPos:GetPos() )
                     tracerEffect:SetOrigin( trace.HitPos )
                     tracerEffect:SetScale( 40000 ) -- usain bolt speed
-                    
+
                     util.Effect( "AirboatGunHeavyTracer", tracerEffect ) -- BIG effect
                     if trace.HitSky then return end
-                    
+
                     local inflictor = self.Shooter or self
                     util.BlastDamage( self, inflictor, trace.HitPos, 90, explosiveDamage ) -- explosion for anti armour power
 
@@ -65,7 +65,7 @@ function ENT:DoShot()
                     effectdata:SetNormal( trace.HitNormal )
                     util.Effect( "gdcw_universal_impact_t", effectdata )
                     util.Decal( "SmallScorch", trace.HitPos + trace.HitNormal, trace.HitPos - trace.HitNormal ) -- decal to communicate that yes, this goes boom
-                    
+
                 end
             } )
 
