@@ -40,7 +40,14 @@ function ENT:Think()
 
     if self.AirburstTime < CurTime() then
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-        local inflictor = IsValid( owner ) and owner or IsValid( self.Turret ) and self.Turret or self
+        local inflictor = owner
+        if not IsValid( owner ) then
+            inflictor = self.Turret
+            if IsValid( inflictor ) do
+                inflictor = self
+            end
+        end
+
         util.BlastDamage( inflictor, self.Turret, self:GetPos(), 700, 100 )
         local effectdata = EffectData()
         effectdata:SetOrigin( self:GetPos() )
