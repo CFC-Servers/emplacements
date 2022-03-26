@@ -2,6 +2,8 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include( "shared.lua" )
 
+local IsValid = IsValid
+
 function ENT:Initialize()
     self.flightvector = self:GetForward() * 300
     self.timeleft = CurTime() + 5
@@ -38,7 +40,7 @@ function ENT:Think()
 
     if self.AirburstTime < CurTime() then
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-        local inflictor = owner or self.Turret
+        local inflictor = IsValid( owner ) and owner or IsValid( self.Turret ) and self.Turret or self
         util.BlastDamage( inflictor, self.Turret, self:GetPos(), 700, 100 )
         local effectdata = EffectData()
         effectdata:SetOrigin( self:GetPos() )
@@ -83,7 +85,7 @@ function ENT:Think()
 
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local attacker = owner or self.Turret or self
-        local inflictor = self.Turret or self -- makes shell work if spawned standalone
+        local inflictor = IsValid( self.Turret ) and self.Turret or self
 
         util.BlastDamage( inflictor, attacker, tr.HitPos, 500, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
         util.BlastDamage( inflictor, attacker, tr.HitPos, 200, tightDamage )
