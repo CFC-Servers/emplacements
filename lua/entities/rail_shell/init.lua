@@ -43,7 +43,7 @@ function ENT:Think()
         local inflictor = owner
         if not IsValid( owner ) then
             inflictor = self.Turret
-            if IsValid( inflictor ) do
+            if IsValid( inflictor ) then
                 inflictor = self
             end
         end
