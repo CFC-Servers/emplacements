@@ -76,6 +76,7 @@ function ENT:CreateEmplacement()
     shootPos:Fire( "setparentattachment", "muzzle" )
     shootPos:SetNoDraw( false )
     shootPos:DrawShadow( false )
+    shootPos.EmplacementTurret = self
     --shootPos:SetColor(Color(0,0,0,0))
     self:SetDTEntity( 1, shootPos )
 end
