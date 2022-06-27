@@ -5,7 +5,6 @@ include( "shared.lua" )
 function ENT:Initialize()
     self.flightvector = self:GetForward() * 35 -- valid default flight vector incase shell is spawned standalone
     self.timeleft = CurTime() + 15
-    self.AirburstTime = CurTime() + 15
     self:SetModel( "models/items/ar2_grenade.mdl" )
     self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,
     self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
@@ -31,21 +30,36 @@ function ENT:Initialize()
     Glow:Activate()
 end
 
+function ENT:Explode()
+    -- damage equals 400 multiplied by two thirds of this turret's firing speed
+    local baseDamage = 185
+    local origin = self:GetPos()
+    local normal = self.flightvector:GetNormalized()
+
+    local owner = IsValid( self:GetOwner() ) and self:GetOwner()
+    local attacker = owner or self.Turret or self
+    local inflictor = self
+
+    util.BlastDamage( inflictor, attacker, self:GetPos(), 350, baseDamage )
+
+    local concrete = 67 -- has to be concrete else errors are spammed
+    local effectdata = EffectData()
+    effectdata:SetOrigin( origin ) -- Position of Impact
+    effectdata:SetNormal( -normal ) -- Direction of Impact
+    effectdata:SetStart( normal ) -- Direction of Round
+    effectdata:SetEntity( self ) -- Who done it?
+    effectdata:SetScale( 0.8 ) -- Size of explosion
+    effectdata:SetRadius( concrete ) -- Texture of Impact
+    effectdata:SetMagnitude( 16 ) -- Length of explosion trails
+    util.Effect( "gdca_airburst_t", effectdata )
+    util.ScreenShake( origin, 10, 5, 1, 1300 )
+    util.Decal( "Scorch", origin + normal, origin - normal )
+    self:Remove()
+end
+
 function ENT:Think()
     if self.timeleft < CurTime() then
-        self:Remove()
-    end
-
-    if self.AirburstTime < CurTime() then
-        local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-        local inflictor = owner or self.Turret
-        util.BlastDamage( inflictor, self.Turret, self:GetPos(), 700, 100 )
-        local effectdata = EffectData()
-        effectdata:SetOrigin( self:GetPos() )
-        effectdata:SetScale( 2 )
-        effectdata:SetMagnitude( 20 )
-        util.Effect( "gdca_airburst_t", effectdata )
-        self:Remove()
+        self:Explode()
     end
 
     local trace = {}
@@ -74,28 +88,7 @@ function ENT:Think()
             return true
         end
 
-        -- damage equals 400 multiplied by two thirds of this turret's firing speed
-        local baseDamage = 185
-
-        local owner = IsValid( self:GetOwner() ) and self:GetOwner()
-        local attacker = owner or self.Turret or self
-        local inflictor = self.Turret or self -- makes shell work if spawned standalone
-
-        util.BlastDamage( inflictor, attacker, self:GetPos(), 350, baseDamage )
-
-        local concrete = 67 -- has to be concrete else errors are spammed
-        local effectdata = EffectData()
-        effectdata:SetOrigin( tr.HitPos ) -- Position of Impact
-        effectdata:SetNormal( tr.HitNormal ) -- Direction of Impact
-        effectdata:SetStart( self.flightvector:GetNormalized() ) -- Direction of Round
-        effectdata:SetEntity( self ) -- Who done it?
-        effectdata:SetScale( 0.8 ) -- Size of explosion
-        effectdata:SetRadius( concrete ) -- Texture of Impact
-        effectdata:SetMagnitude( 16 ) -- Length of explosion trails
-        util.Effect( "gdca_airburst_t", effectdata )
-        util.ScreenShake( tr.HitPos, 10, 5, 1, 1300 )
-        util.Decal( "Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal )
-        self:Remove()
+        return self:Explode()
     end
 
     self:SetPos( self:GetPos() + self.flightvector )
