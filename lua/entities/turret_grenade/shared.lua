@@ -9,7 +9,7 @@ ENT.TurretFloatHeight = 3
 ENT.TurretModelOffset = Vector( 0, 0, 44 )
 ENT.TurretTurnMax = 0
 ENT.LastShot = 0
-ENT.ShotInterval = 1.2
+ENT.ShotInterval = 0.55
 ENT.longSpawnSetup = true
 
 ENT.angleInverse = -1
@@ -40,7 +40,7 @@ function ENT:DoShot()
             nade:SetOwner( self.Shooter )
             nade.flightvector = self:GetRight() * 35
             nade.Turret = self
-            self:ApplyRecoil( 0.1, 1, -5000 )
+            self:ApplyRecoil( 0.1, 1, -15000 )
         end
 
         self.LastShot = CurTime()

@@ -99,10 +99,6 @@ function ENT:EmplacementConnect( plr )
 end
 
 function ENT:Use( plr )
-    if not self.doneSetup then
-        plr:PrintMessage( 4, "The emplacement is still setting up!")
-    end
-
     if not self:ShooterStillValid() then
         local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
         if call == false then return end
@@ -131,10 +127,29 @@ function ENT:Think()
 
         self:EmplacementSetupCheck()
 
+        local shooter = self:GetShooter()
+        local keyDown = nil
+        local pressKey = IN_BULLRUSH
+        if CLIENT and game.SinglePlayer() then
+            pressKey = IN_ATTACK
+        end
+        if shooter then
+            keyDown = shooter:KeyDown( pressKey )
+
+            if not self.doneSetup and keyDown then
+                shooter:PrintMessage( 4, "The emplacement is still setting up!" )
+                if not self.doneClick then
+                    self.doneClick = true
+                    self:EmitSound( "weapons/shotgun/shotgun_empty.wav", 70 )
+                end
+            elseif not keyDown then
+                self.doneClick = nil
+            end
+        end
+
         if self:ShooterStillValid() then
             if not self.doneSetup then
                 self.OffsetAng = self.turretBase:GetAngles() -- makes emplacement not aim when its setting up
-                -- TODO: replace this with slower aiming instead
                 return
             end
 
@@ -149,13 +164,10 @@ function ENT:Think()
                 end
             end
 
-            local pressKey = IN_BULLRUSH
-
-            if CLIENT and game.SinglePlayer() then
-                pressKey = IN_ATTACK
+            if self.doneSetup then
+                self.Firing = keyDown
             end
 
-            self.Firing = self:GetShooter():KeyDown( pressKey )
         else
             if not SERVER then return end
             self.OffsetAng = self.turretBase:GetAngles()

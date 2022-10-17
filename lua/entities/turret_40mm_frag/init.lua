@@ -32,7 +32,7 @@ end
 
 function ENT:Explode()
     -- damage equals 400 multiplied by two thirds of this turret's firing speed
-    local baseDamage = 185
+    local baseDamage = 120
     local origin = self:GetPos()
     local normal = self.flightvector:GetNormalized()
 
@@ -40,7 +40,7 @@ function ENT:Explode()
     local attacker = owner or self.Turret or self
     local inflictor = self
 
-    util.BlastDamage( inflictor, attacker, self:GetPos(), 350, baseDamage )
+    util.BlastDamage( inflictor, attacker, self:GetPos(), 400, baseDamage )
 
     local concrete = 67 -- has to be concrete else errors are spammed
     local effectdata = EffectData()

@@ -32,7 +32,7 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local bulletDamage = 400 * self.ShotInterval -- ensuring dps of 400
+            local bulletDamage = 500 * self.ShotInterval -- ensuring dps of var
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Forward() * 10,
@@ -55,7 +55,7 @@ function ENT:DoShot()
             } )
 
             --end
-            self:ApplyRecoil( 0.1, 1, 110000 )
+            self:ApplyRecoil( 0.1, 1, 140000 )
         end
 
         self.LastShot = CurTime()
