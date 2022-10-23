@@ -61,7 +61,7 @@ function ENT:Think()
     trace.start = self:GetPos()
     trace.endpos = self:GetPos() + self.flightvector
     trace.filter = self
-    trace.mask = MASK_SHOT -- Trace for stuff that bullets would normally hit
+    trace.mask = bit.bxor( MASK_SHOT, MASK_WATER ) -- Trace for stuff that bullets would normally hit
     local tr = util.TraceLine( trace )
 
     if tr.Hit then
