@@ -89,13 +89,6 @@ function ENT:Think()
         self:Remove()
     end
 
-    local trace = {}
-    trace.start = self:GetPos()
-    trace.endpos = self:GetPos() + self.flightvector
-    trace.filter = self
-    trace.mask = bit.bxor( MASK_SHOT, MASK_WATER ) -- Trace for stuff that bullets would normally hit
-    local tr = util.TraceLine( trace )
-
     if self.AirburstTime < CurTime() then
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local inflictor = owner
@@ -108,6 +101,13 @@ function ENT:Think()
 
         self:Splode()
     end
+    
+    local trace = {}
+    trace.start = self:GetPos()
+    trace.endpos = self:GetPos() + self.flightvector
+    trace.filter = self
+    trace.mask = bit.bxor( MASK_SHOT, MASK_WATER ) -- Trace for stuff that bullets would normally hit
+    local tr = util.TraceLine( trace )
 
     if tr.Hit then
         if tr.HitSky then
