@@ -35,7 +35,7 @@ function ENT:Initialize()
     glow:Activate()
 end
 
-function ENT:Splode( tr )
+function ENT:Explode( tr )
     -- damage equals 400 multipled by a bit less than the firing interval
     local baseDamage = 1188
     local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
@@ -106,7 +106,7 @@ function ENT:Think()
             end
         end
 
-        self:Splode()
+        self:Explode()
     end
 
     if tr.Hit then
@@ -128,7 +128,7 @@ function ENT:Think()
             return true
         end
 
-        self:Splode( tr )
+        self:Explode( tr )
 
     end
     self:SetPos( self:GetPos() + self.flightvector )
