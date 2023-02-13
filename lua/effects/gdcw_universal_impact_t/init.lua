@@ -63,7 +63,7 @@ function EFFECT:Dust()
     sound.Play( "Bullet.Impact", self.Origin )
     self.Emitter = ParticleEmitter( self.Origin )
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particles/smokey", self.Origin )
 
         if ( Smoke ) then
@@ -81,7 +81,7 @@ function EFFECT:Dust()
         end
     end
 
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
         if ( Smoke ) then
@@ -99,7 +99,7 @@ function EFFECT:Dust()
         end
     end
 
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Origin )
 
         if ( Debris ) then
@@ -118,7 +118,7 @@ function EFFECT:Dust()
         end
     end
 
-    for i = 0, 1 do
+    for _ = 0, 1 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
         if ( Flash ) then
@@ -140,7 +140,7 @@ function EFFECT:Dirt()
     sound.Play( "Bullet.Impact", self.Origin )
     self.Emitter = ParticleEmitter( self.Origin )
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particles/smokey", self.Origin )
 
         if ( Smoke ) then
@@ -158,7 +158,7 @@ function EFFECT:Dirt()
         end
     end
 
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
         if ( Smoke ) then
@@ -176,7 +176,7 @@ function EFFECT:Dirt()
         end
     end
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Origin )
 
         if ( Debris ) then
@@ -195,7 +195,7 @@ function EFFECT:Dirt()
         end
     end
 
-    for i = 0, 1 do
+    for _ = 0, 1 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
         if ( Flash ) then
@@ -217,7 +217,7 @@ function EFFECT:Sand()
     sound.Play( "Bullet.Impact", self.Origin )
     self.Emitter = ParticleEmitter( self.Origin )
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particles/smokey", self.Origin )
 
         if ( Smoke ) then
@@ -235,7 +235,7 @@ function EFFECT:Sand()
         end
     end
 
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
         if ( Smoke ) then
@@ -258,7 +258,7 @@ function EFFECT:Metal()
     sound.Play( "Bullet.Impact", self.Origin )
     self.Emitter = ParticleEmitter( self.Origin )
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
         if ( Smoke ) then
@@ -276,7 +276,7 @@ function EFFECT:Metal()
         end
     end
 
-    for i = 0, 3 do
+    for _ = 0, 3 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
         if ( Flash ) then
@@ -293,7 +293,7 @@ function EFFECT:Metal()
         end
     end
 
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local particle = self.Emitter:Add( "effects/spark", self.Origin )
 
         if ( particle ) then
@@ -314,7 +314,7 @@ function EFFECT:Smoke()
     sound.Play( "Bullet.Impact", self.Origin )
     self.Emitter = ParticleEmitter( self.Origin )
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
         if ( Smoke ) then
@@ -332,7 +332,7 @@ function EFFECT:Smoke()
         end
     end
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_tile" .. math.random( 1, 2 ), self.Origin )
 
         if ( Debris ) then
@@ -351,7 +351,7 @@ function EFFECT:Smoke()
         end
     end
 
-    for i = 0, 1 do
+    for _ = 0, 1 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
         if ( Flash ) then
@@ -373,7 +373,7 @@ function EFFECT:Wood()
     sound.Play( "Bullet.Impact", self.Origin )
     self.Emitter = ParticleEmitter( self.Origin )
 
-    for i = 0, 5 * self.Scale do
+    for _ = 0, 5 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
         if ( Smoke ) then
@@ -391,7 +391,7 @@ function EFFECT:Wood()
         end
     end
 
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
         if ( Smoke ) then
@@ -409,7 +409,7 @@ function EFFECT:Wood()
         end
     end
 
-    for i = 0, 15 * self.Scale do
+    for _ = 0, 15 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_wood" .. math.random( 1, 2 ), self.Origin + self.DirVec )
 
         if ( Debris ) then
@@ -430,7 +430,7 @@ function EFFECT:Wood()
 end
 
 function EFFECT:Glass()
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_glass" .. math.random( 1, 3 ), self.Origin + self.DirVec )
 
         if ( Debris ) then
@@ -449,7 +449,7 @@ function EFFECT:Glass()
         end
     end
 
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_glass" .. math.random( 1, 3 ), self.Origin )
 
         if ( Debris ) then
@@ -468,7 +468,7 @@ function EFFECT:Glass()
 end
 
 function EFFECT:Blood()
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
         if ( Smoke ) then
@@ -488,7 +488,7 @@ function EFFECT:Blood()
 end
 
 function EFFECT:YellowBlood()
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
         if ( Smoke ) then

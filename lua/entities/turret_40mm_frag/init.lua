@@ -9,30 +9,33 @@ function ENT:Initialize()
     self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,
     self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
     self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
-    Tracer = ents.Create( "env_spritetrail" )
-    Tracer:SetKeyValue( "lifetime", "0.3" )
-    Tracer:SetKeyValue( "startwidth", "32" )
-    Tracer:SetKeyValue( "endwidth", "0" )
-    Tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
-    Tracer:SetKeyValue( "rendermode", "5" )
-    Tracer:SetKeyValue( "rendercolor", "255 255 255" )
-    Tracer:SetPos( self:GetPos() )
-    Tracer:SetParent( self )
-    Tracer:Spawn()
-    Tracer:Activate()
-    Glow = ents.Create( "env_sprite" )
-    Glow:SetKeyValue( "model", "orangecore2.vmt" )
-    Glow:SetKeyValue( "rendercolor", "37 138 210" )
-    Glow:SetKeyValue( "scale", "0.1" )
-    Glow:SetPos( self:GetPos() )
-    Glow:SetParent( self )
-    Glow:Spawn()
-    Glow:Activate()
+
+    local tracer = ents.Create( "env_spritetrail" )
+    tracer:SetKeyValue( "lifetime", "0.3" )
+    tracer:SetKeyValue( "startwidth", "32" )
+    tracer:SetKeyValue( "endwidth", "0" )
+    tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
+    tracer:SetKeyValue( "rendermode", "5" )
+    tracer:SetKeyValue( "rendercolor", "255 255 255" )
+    tracer:SetPos( self:GetPos() )
+    tracer:Spawn()
+    tracer:Activate()
+
+    self.tracer = tracer
+
+    local glow = ents.Create( "env_sprite" )
+    glow:SetKeyValue( "model", "orangecore2.vmt" )
+    glow:SetKeyValue( "rendercolor", "37 138 210" )
+    glow:SetKeyValue( "scale", "0.1" )
+    glow:SetPos( self:GetPos() )
+    glow:SetParent( self )
+    glow:Spawn()
+    glow:Activate()
 end
 
 function ENT:Explode()
     -- damage equals 400 multiplied by two thirds of this turret's firing speed
-    local baseDamage = 185
+    local baseDamage = 120
     local origin = self:GetPos()
     local normal = self.flightvector:GetNormalized()
 
@@ -40,7 +43,7 @@ function ENT:Explode()
     local attacker = owner or self.Turret or self
     local inflictor = self
 
-    util.BlastDamage( inflictor, attacker, self:GetPos(), 350, baseDamage )
+    util.BlastDamage( inflictor, attacker, self:GetPos(), 400, baseDamage )
 
     local concrete = 67 -- has to be concrete else errors are spammed
     local effectdata = EffectData()
@@ -54,7 +57,12 @@ function ENT:Explode()
     util.Effect( "gdca_airburst_t", effectdata )
     util.ScreenShake( origin, 10, 5, 1, 1300 )
     util.Decal( "Scorch", origin + normal, origin - normal )
+
     self:Remove()
+
+    if not IsValid( self.tracer ) then return end
+    self.tracer:SetPos( self:GetPos() )
+    SafeRemoveEntityDelayed( self.tracer, 5 )
 end
 
 function ENT:Think()
@@ -95,6 +103,10 @@ function ENT:Think()
     self.flightvector = self.flightvector + ( Vector( math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ) ) + Vector( 0, 0, math.Rand( 0, -0.32 ) ) )
     self:SetAngles( self.flightvector:Angle() )
     self:NextThink( CurTime() )
+
+    if not IsValid( self.tracer ) then return true end
+
+    self.tracer:SetPos( self:GetPos() ) -- use SetPos in think to prevent stupid bug where tracer jumps up to origin when unparented
 
     return true
 end

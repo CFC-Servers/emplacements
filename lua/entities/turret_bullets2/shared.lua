@@ -33,7 +33,7 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local fullDamage = 400 * self.ShotInterval -- ensuring dps of 400
+            local fullDamage = 500 * self.ShotInterval -- ensuring dps of var
             local bulletDamage = fullDamage * 0.66 --cutting up damage into two components
             local explosiveDamage = fullDamage * 0.33
             self.shootPos:FireBullets( {
@@ -69,7 +69,7 @@ function ENT:DoShot()
                 end
             } )
 
-            self:ApplyRecoil( 0.05, 1, -50000 )
+            self:ApplyRecoil( 0.05, 1, -70000 )
         end
 
         self.LastShot = CurTime()
