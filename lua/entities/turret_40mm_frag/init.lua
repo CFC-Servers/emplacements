@@ -34,7 +34,6 @@ function ENT:Initialize()
 end
 
 function ENT:Explode()
-
     -- damage equals 400 multiplied by two thirds of this turret's firing speed
     local baseDamage = 120
     local origin = self:GetPos()
@@ -64,7 +63,6 @@ function ENT:Explode()
     if not IsValid( self.tracer ) then return end
     self.tracer:SetPos( self:GetPos() )
     SafeRemoveEntityDelayed( self.tracer, 5 )
-
 end
 
 function ENT:Think()

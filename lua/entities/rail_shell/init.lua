@@ -33,11 +33,9 @@ function ENT:Initialize()
     glow:SetParent( self )
     glow:Spawn()
     glow:Activate()
-
 end
 
 function ENT:Splode( tr )
-
     -- damage equals 400 multipled by a bit less than the firing interval
     local baseDamage = 1188
     local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
@@ -83,7 +81,6 @@ function ENT:Splode( tr )
     if not IsValid( self.Tracer ) then return end
     self.Tracer:SetPos( self:GetPos() )
     SafeRemoveEntityDelayed( self.Tracer, 5 )
-
 end
 
 function ENT:Think()
@@ -99,6 +96,7 @@ function ENT:Think()
     local tr = util.TraceLine( trace )
 
     if self.AirburstTime < CurTime() then
+
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
         local inflictor = owner
         if not IsValid( owner ) then
