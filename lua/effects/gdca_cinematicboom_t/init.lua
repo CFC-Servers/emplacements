@@ -71,7 +71,7 @@ function EFFECT:Init( data )
 end
 
 function EFFECT:Dust()
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -103,7 +103,7 @@ function EFFECT:Dust()
         Distort:SetColor( 255, 255, 255 )
     end
 
-    for i = 1, 20 * self.Scale do
+    for _ = 1, 20 * self.Scale do
         local Dust = self.Emitter:Add( "particle/particle_composite", self.Pos )
 
         if ( Dust ) then
@@ -111,8 +111,8 @@ function EFFECT:Dust()
             Dust:SetDieTime( math.Rand( 2, 3 ) )
             Dust:SetStartAlpha( 230 )
             Dust:SetEndAlpha( 0 )
-            Dust:SetStartSize( ( 50 * self.Scale ) )
-            Dust:SetEndSize( ( 100 * self.Scale ) )
+            Dust:SetStartSize( 50 * self.Scale )
+            Dust:SetEndSize( 100 * self.Scale )
             Dust:SetRoll( math.Rand( 150, 360 ) )
             Dust:SetRollDelta( math.Rand( -1, 1 ) )
             Dust:SetAirResistance( 150 )
@@ -121,7 +121,7 @@ function EFFECT:Dust()
         end
     end
 
-    for i = 1, 15 * self.Scale do
+    for _ = 1, 15 * self.Scale do
         local Dust = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Dust ) then
@@ -129,8 +129,8 @@ function EFFECT:Dust()
             Dust:SetDieTime( math.Rand( 1, 5 ) * self.Scale )
             Dust:SetStartAlpha( 50 )
             Dust:SetEndAlpha( 0 )
-            Dust:SetStartSize( ( 80 * self.Scale ) )
-            Dust:SetEndSize( ( 100 * self.Scale ) )
+            Dust:SetStartSize( 80 * self.Scale )
+            Dust:SetEndSize( 100 * self.Scale )
             Dust:SetRoll( math.Rand( 150, 360 ) )
             Dust:SetRollDelta( math.Rand( -1, 1 ) )
             Dust:SetAirResistance( 250 )
@@ -139,7 +139,7 @@ function EFFECT:Dust()
         end
     end
 
-    for i = 1, 25 * self.Scale do
+    for _ = 1, 25 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Pos )
 
         if ( Debris ) then
@@ -159,8 +159,8 @@ function EFFECT:Dust()
     local Angle = self.DirVec:Angle()
 
     --/ This part makes the trailers ///
-    for i = 1, self.DebrizzlemyNizzle do
-        Angle:RotateAroundAxis( Angle:Forward(), ( 360 / self.DebrizzlemyNizzle ) )
+    for _ = 1, self.DebrizzlemyNizzle do
+        Angle:RotateAroundAxis( Angle:Forward(), 360 / self.DebrizzlemyNizzle )
         local DustRing = Angle:Up()
         local RanVec = self.DirVec * math.Rand( 1, 5 ) + ( DustRing * math.Rand( 2, 5 ) )
 
@@ -183,7 +183,7 @@ function EFFECT:Dust()
 end
 
 function EFFECT:Dirt()
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -215,7 +215,7 @@ function EFFECT:Dirt()
         Distort:SetColor( 255, 255, 255 )
     end
 
-    for i = 1, 20 * self.Scale do
+    for _ = 1, 20 * self.Scale do
         local Dust = self.Emitter:Add( "particle/particle_composite", self.Pos )
 
         if ( Dust ) then
@@ -223,8 +223,8 @@ function EFFECT:Dirt()
             Dust:SetDieTime( math.Rand( 2, 3 ) )
             Dust:SetStartAlpha( 230 )
             Dust:SetEndAlpha( 0 )
-            Dust:SetStartSize( ( 50 * self.Scale ) )
-            Dust:SetEndSize( ( 100 * self.Scale ) )
+            Dust:SetStartSize( 50 * self.Scale )
+            Dust:SetEndSize( 100 * self.Scale )
             Dust:SetRoll( math.Rand( 150, 360 ) )
             Dust:SetRollDelta( math.Rand( -1, 1 ) )
             Dust:SetAirResistance( 150 )
@@ -233,7 +233,7 @@ function EFFECT:Dirt()
         end
     end
 
-    for i = 1, 15 * self.Scale do
+    for _ = 1, 15 * self.Scale do
         local Dust = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Dust ) then
@@ -241,8 +241,8 @@ function EFFECT:Dirt()
             Dust:SetDieTime( math.Rand( 1, 5 ) * self.Scale )
             Dust:SetStartAlpha( 50 )
             Dust:SetEndAlpha( 0 )
-            Dust:SetStartSize( ( 80 * self.Scale ) )
-            Dust:SetEndSize( ( 100 * self.Scale ) )
+            Dust:SetStartSize( 80 * self.Scale )
+            Dust:SetEndSize( 100 * self.Scale )
             Dust:SetRoll( math.Rand( 150, 360 ) )
             Dust:SetRollDelta( math.Rand( -1, 1 ) )
             Dust:SetAirResistance( 250 )
@@ -251,7 +251,7 @@ function EFFECT:Dirt()
         end
     end
 
-    for i = 1, 25 * self.Scale do
+    for _ = 1, 25 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Pos )
 
         if ( Debris ) then
@@ -271,8 +271,8 @@ function EFFECT:Dirt()
     local Angle = self.DirVec:Angle()
 
     --/ This part makes the trailers ///
-    for i = 1, self.DebrizzlemyNizzle do
-        Angle:RotateAroundAxis( Angle:Forward(), ( 360 / self.DebrizzlemyNizzle ) )
+    for _ = 1, self.DebrizzlemyNizzle do
+        Angle:RotateAroundAxis( Angle:Forward(), 360 / self.DebrizzlemyNizzle )
         local DustRing = Angle:Up()
         local RanVec = self.DirVec * math.Rand( 2, 6 ) + ( DustRing * math.Rand( 1, 4 ) )
 
@@ -296,7 +296,7 @@ end
 
 function EFFECT:Sand()
     -- This is the main plume
-    for i = 0, 45 * self.Scale do
+    for _ = 0, 45 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Smoke ) then
@@ -330,7 +330,7 @@ function EFFECT:Sand()
     end
 
     -- This is the dirt kickup
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Dust = self.Emitter:Add( "particle/particle_composite", self.Pos )
 
         if ( Dust ) then
@@ -349,7 +349,7 @@ function EFFECT:Sand()
     end
 
     -- Chunkage
-    for i = 0, 25 * self.Scale do
+    for _ = 0, 25 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Pos )
 
         if ( Debris ) then
@@ -367,7 +367,7 @@ function EFFECT:Sand()
     end
 
     -- Shrapnel
-    for i = 0, 25 * self.Scale do
+    for _ = 0, 25 * self.Scale do
         local Shrapnel = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Pos + self.DirVec )
 
         if ( Shrapnel ) then
@@ -387,7 +387,7 @@ function EFFECT:Sand()
     end
 
     -- Blast flash
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -404,7 +404,7 @@ function EFFECT:Sand()
         end
     end
 
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Smoke ) then
@@ -422,7 +422,7 @@ function EFFECT:Sand()
         end
     end
 
-    for i = 0, 5 * self.Scale do
+    for _ = 0, 5 * self.Scale do
         local Whisp = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Whisp ) then
@@ -443,8 +443,8 @@ function EFFECT:Sand()
     local Density = 40 * self.Scale --/ This part is for the dust ring ///
     local Angle = self.DirVec:Angle()
 
-    for i = 0, Density do
-        Angle:RotateAroundAxis( Angle:Forward(), ( 360 / Density ) )
+    for _ = 0, Density do
+        Angle:RotateAroundAxis( Angle:Forward(), 360 / Density )
         local ShootVector = Angle:Up()
         local Smoke = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
@@ -466,7 +466,7 @@ end
 
 function EFFECT:Metal()
     -- Blast flash
-    for i = 1, 3 do
+    for _ = 1, 3 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -498,7 +498,7 @@ function EFFECT:Metal()
         Distort:SetColor( 255, 255, 255 )
     end
 
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Whisp = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Whisp ) then
@@ -516,7 +516,7 @@ function EFFECT:Metal()
         end
     end
 
-    for i = 0, 30 * self.Scale do
+    for _ = 0, 30 * self.Scale do
         local Sparks = self.Emitter:Add( "effects/spark", self.Pos )
 
         if ( Sparks ) then
@@ -532,7 +532,7 @@ function EFFECT:Metal()
         end
     end
 
-    for i = 0, 10 * self.Scale do
+    for _ = 0, 10 * self.Scale do
         local Sparks = self.Emitter:Add( "effects/yellowflare", self.Pos )
 
         if ( Sparks ) then
@@ -551,7 +551,7 @@ end
 
 function EFFECT:Smoke()
     -- Blast flash
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -583,7 +583,7 @@ function EFFECT:Smoke()
         Distort:SetColor( 255, 255, 255 )
     end
 
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Whisp = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Whisp ) then
@@ -601,7 +601,7 @@ function EFFECT:Smoke()
         end
     end
 
-    for i = 1, 25 * self.Scale do
+    for _ = 1, 25 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_tile" .. math.random( 1, 2 ), self.Pos )
 
         if ( Debris ) then
@@ -621,8 +621,8 @@ function EFFECT:Smoke()
     local Angle = self.DirVec:Angle()
 
     --/ This part makes the trailers ///
-    for i = 1, self.DebrizzlemyNizzle do
-        Angle:RotateAroundAxis( Angle:Forward(), ( 360 / self.DebrizzlemyNizzle ) )
+    for _ = 1, self.DebrizzlemyNizzle do
+        Angle:RotateAroundAxis( Angle:Forward(), 360 / self.DebrizzlemyNizzle )
         local DustRing = Angle:Up()
         local RanVec = self.DirVec * math.Rand( 1, 4 ) + ( DustRing * math.Rand( 3, 4 ) )
 
@@ -645,7 +645,7 @@ function EFFECT:Smoke()
 end
 
 function EFFECT:Wood()
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -677,7 +677,7 @@ function EFFECT:Wood()
         Distort:SetColor( 255, 255, 255 )
     end
 
-    for i = 0, 30 * self.Scale do
+    for _ = 0, 30 * self.Scale do
         local Whisp = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Whisp ) then
@@ -695,7 +695,7 @@ function EFFECT:Wood()
         end
     end
 
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_wood" .. math.random( 1, 2 ), self.Pos + self.DirVec )
 
         if ( Debris ) then
@@ -715,7 +715,7 @@ end
 
 function EFFECT:Glass()
     -- Blast flash
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -747,7 +747,7 @@ function EFFECT:Glass()
         Distort:SetColor( 255, 255, 255 )
     end
 
-    for i = 0, 30 * self.Scale do
+    for _ = 0, 30 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_glass" .. math.random( 1, 3 ), self.Pos )
 
         if ( Debris ) then
@@ -766,7 +766,7 @@ function EFFECT:Glass()
         end
     end
 
-    for i = 0, 30 * self.Scale do
+    for _ = 0, 30 * self.Scale do
         local Whisp = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Whisp ) then
@@ -787,7 +787,7 @@ end
 
 function EFFECT:Blood()
     -- If you recieve over 50,000 joules of energy, you become red mist.
-    for i = 0, 30 * self.Scale do
+    for _ = 0, 30 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Pos )
 
         if ( Smoke ) then
@@ -821,7 +821,7 @@ function EFFECT:Blood()
     end
 
     -- Add some finer details....
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Smoke ) then
@@ -840,7 +840,7 @@ function EFFECT:Blood()
     end
 
     -- Into the flash!
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -858,7 +858,7 @@ function EFFECT:Blood()
     end
 
     -- Chunkage NOT contained
-    for i = 1, 20 * self.Scale do
+    for _ = 1, 20 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Pos - ( self.DirVec * 5 ) )
 
         if ( Debris ) then
@@ -881,7 +881,7 @@ end
 
 function EFFECT:YellowBlood()
     -- If you recieve over 50,000 joules of energy, you become red mist.
-    for i = 0, 30 * self.Scale do
+    for _ = 0, 30 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Pos )
 
         if ( Smoke ) then
@@ -915,7 +915,7 @@ function EFFECT:YellowBlood()
     end
 
     -- Add some finer details....
-    for i = 0, 20 * self.Scale do
+    for _ = 0, 20 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokesprites_000" .. math.random( 1, 9 ), self.Pos )
 
         if ( Smoke ) then
@@ -934,7 +934,7 @@ function EFFECT:YellowBlood()
     end
 
     -- Into the flash!
-    for i = 1, 5 do
+    for _ = 1, 5 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Pos )
 
         if ( Flash ) then
@@ -952,7 +952,7 @@ function EFFECT:YellowBlood()
     end
 
     -- Chunkage NOT contained
-    for i = 1, 20 * self.Scale do
+    for _ = 1, 20 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Pos - ( self.DirVec * 5 ) )
 
         if ( Debris ) then

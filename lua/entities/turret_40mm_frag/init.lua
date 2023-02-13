@@ -9,6 +9,7 @@ function ENT:Initialize()
     self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,
     self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
     self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
+
     Tracer = ents.Create( "env_spritetrail" )
     Tracer:SetKeyValue( "lifetime", "0.3" )
     Tracer:SetKeyValue( "startwidth", "32" )
@@ -17,9 +18,11 @@ function ENT:Initialize()
     Tracer:SetKeyValue( "rendermode", "5" )
     Tracer:SetKeyValue( "rendercolor", "255 255 255" )
     Tracer:SetPos( self:GetPos() )
-    Tracer:SetParent( self )
     Tracer:Spawn()
     Tracer:Activate()
+
+    self.Tracer = Tracer
+
     Glow = ents.Create( "env_sprite" )
     Glow:SetKeyValue( "model", "orangecore2.vmt" )
     Glow:SetKeyValue( "rendercolor", "37 138 210" )
@@ -31,6 +34,10 @@ function ENT:Initialize()
 end
 
 function ENT:Explode()
+
+    self.Tracer:SetPos( self:GetPos() )
+    SafeRemoveEntityDelayed( self.Tracer, 5 )
+
     -- damage equals 400 multiplied by two thirds of this turret's firing speed
     local baseDamage = 120
     local origin = self:GetPos()
@@ -66,7 +73,7 @@ function ENT:Think()
     trace.start = self:GetPos()
     trace.endpos = self:GetPos() + self.flightvector
     trace.filter = self
-    trace.mask = MASK_SHOT + MASK_WATER -- Trace for stuff that bullets would normally hit
+    trace.mask = bit.bxor( MASK_SHOT, MASK_WATER ) -- Trace for stuff that bullets would normally hit
     local tr = util.TraceLine( trace )
 
     if tr.Hit then
@@ -95,6 +102,8 @@ function ENT:Think()
     self.flightvector = self.flightvector + ( Vector( math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ) ) + Vector( 0, 0, math.Rand( 0, -0.32 ) ) )
     self:SetAngles( self.flightvector:Angle() )
     self:NextThink( CurTime() )
+
+    self.Tracer:SetPos( self:GetPos() ) -- use SetPos in think to prevent stupid bug where tracer jumps up to origin when unparented
 
     return true
 end

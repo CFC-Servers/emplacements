@@ -13,14 +13,13 @@ function ENT:Initialize()
     self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
     self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
     Tracer = ents.Create( "env_spritetrail" )
-    Tracer:SetKeyValue( "lifetime", "0.8" )
-    Tracer:SetKeyValue( "startwidth", "150" )
+    Tracer:SetKeyValue( "lifetime", "1.5" )
+    Tracer:SetKeyValue( "startwidth", "100" )
     Tracer:SetKeyValue( "endwidth", "30" )
     Tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
     Tracer:SetKeyValue( "rendermode", "5" )
     Tracer:SetKeyValue( "rendercolor", "37 138 210" )
     Tracer:SetPos( self:GetPos() )
-    Tracer:SetParent( self )
     Tracer:Spawn()
     Tracer:Activate()
 
@@ -38,7 +37,7 @@ end
 
 function ENT:Splode( tr )
 
-    self.Tracer:SetParent( nil )
+    self.Tracer:SetPos( self:GetPos() )
     SafeRemoveEntityDelayed( self.Tracer, 5 )
 
     -- damage equals 400 multipled by a bit less than the firing interval
@@ -55,9 +54,14 @@ function ENT:Splode( tr )
     util.BlastDamage( inflictor, attacker, tr.HitPos, 500, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
     util.BlastDamage( inflictor, attacker, tr.HitPos, 200, tightDamage )
 
+    local directDamage = 100
+    if tr.Entity:IsVehicle() then -- reward anyone insane enough to hit some lfs, or vehicle
+        directDamage = 400
+    end
+
     local Damage = DamageInfo()
     Damage:SetDamageType( DMG_BLAST )
-    Damage:SetDamage( 100 )
+    Damage:SetDamage( directDamage )
     Damage:SetDamageForce( self:GetForward() * 70000 )
     Damage:SetAttacker( attacker )
     Damage:SetInflictor( inflictor )
@@ -75,6 +79,7 @@ function ENT:Splode( tr )
     util.Effect( "gdca_cinematicboom_t", effectdata )
     util.ScreenShake( tr.HitPos, 10, 5, 1, 1500 )
     util.Decal( "Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal )
+
     self:Remove()
 
 end
@@ -88,7 +93,7 @@ function ENT:Think()
     trace.start = self:GetPos()
     trace.endpos = self:GetPos() + self.flightvector
     trace.filter = self
-    trace.mask = MASK_SHOT + MASK_WATER -- Trace for stuff that bullets would normally hit
+    trace.mask = bit.bxor( MASK_SHOT, MASK_WATER ) -- Trace for stuff that bullets would normally hit
     local tr = util.TraceLine( trace )
 
     if self.AirburstTime < CurTime() then
@@ -126,11 +131,12 @@ function ENT:Think()
         self:Splode( tr )
 
     end
-
     self:SetPos( self:GetPos() + self.flightvector )
     self.flightvector = self.flightvector + ( Vector( math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ) ) + Vector( 0, 0, -0.01 ) )
     self:SetAngles( self.flightvector:Angle() )
     self:NextThink( CurTime() )
+
+    self.Tracer:SetPos( self:GetPos() ) -- use SetPos in think to prevent stupid bug where tracer jumps up to origin when unparented
 
     return true
 end
