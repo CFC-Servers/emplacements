@@ -55,13 +55,13 @@ function ENT:Splode( tr )
         directDamage = 400
     end
 
-    local Damage = DamageInfo()
-    Damage:SetDamageType( DMG_BLAST )
-    Damage:SetDamage( directDamage )
-    Damage:SetDamageForce( self:GetForward() * 70000 )
-    Damage:SetAttacker( attacker )
-    Damage:SetInflictor( inflictor )
-    tr.Entity:TakeDamageInfo( Damage )
+    local damage = DamageInfo()
+    damage:SetDamageType( DMG_BLAST )
+    damage:SetDamage( directDamage )
+    damage:SetDamageForce( self:GetForward() * 70000 )
+    damage:SetAttacker( attacker )
+    damage:SetInflictor( inflictor )
+    tr.Entity:TakeDamageInfo( damage )
 
     local concrete = 67 -- has to be concrete else errors are spammed
     local effectdata = EffectData()
