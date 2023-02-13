@@ -10,33 +10,30 @@ function ENT:Initialize()
     self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
     self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
 
-    Tracer = ents.Create( "env_spritetrail" )
-    Tracer:SetKeyValue( "lifetime", "0.3" )
-    Tracer:SetKeyValue( "startwidth", "32" )
-    Tracer:SetKeyValue( "endwidth", "0" )
-    Tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
-    Tracer:SetKeyValue( "rendermode", "5" )
-    Tracer:SetKeyValue( "rendercolor", "255 255 255" )
-    Tracer:SetPos( self:GetPos() )
-    Tracer:Spawn()
-    Tracer:Activate()
+    local tracer = ents.Create( "env_spritetrail" )
+    tracer:SetKeyValue( "lifetime", "0.3" )
+    tracer:SetKeyValue( "startwidth", "32" )
+    tracer:SetKeyValue( "endwidth", "0" )
+    tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
+    tracer:SetKeyValue( "rendermode", "5" )
+    tracer:SetKeyValue( "rendercolor", "255 255 255" )
+    tracer:SetPos( self:GetPos() )
+    tracer:Spawn()
+    tracer:Activate()
 
-    self.Tracer = Tracer
+    self.tracer = tracer
 
-    Glow = ents.Create( "env_sprite" )
-    Glow:SetKeyValue( "model", "orangecore2.vmt" )
-    Glow:SetKeyValue( "rendercolor", "37 138 210" )
-    Glow:SetKeyValue( "scale", "0.1" )
-    Glow:SetPos( self:GetPos() )
-    Glow:SetParent( self )
-    Glow:Spawn()
-    Glow:Activate()
+    local glow = ents.Create( "env_sprite" )
+    glow:SetKeyValue( "model", "orangecore2.vmt" )
+    glow:SetKeyValue( "rendercolor", "37 138 210" )
+    glow:SetKeyValue( "scale", "0.1" )
+    glow:SetPos( self:GetPos() )
+    glow:SetParent( self )
+    glow:Spawn()
+    glow:Activate()
 end
 
 function ENT:Explode()
-
-    self.Tracer:SetPos( self:GetPos() )
-    SafeRemoveEntityDelayed( self.Tracer, 5 )
 
     -- damage equals 400 multiplied by two thirds of this turret's firing speed
     local baseDamage = 120
@@ -61,7 +58,13 @@ function ENT:Explode()
     util.Effect( "gdca_airburst_t", effectdata )
     util.ScreenShake( origin, 10, 5, 1, 1300 )
     util.Decal( "Scorch", origin + normal, origin - normal )
+
     self:Remove()
+
+    if not IsValid( self.tracer ) then return end
+    self.tracer:SetPos( self:GetPos() )
+    SafeRemoveEntityDelayed( self.tracer, 5 )
+
 end
 
 function ENT:Think()
@@ -103,7 +106,9 @@ function ENT:Think()
     self:SetAngles( self.flightvector:Angle() )
     self:NextThink( CurTime() )
 
-    self.Tracer:SetPos( self:GetPos() ) -- use SetPos in think to prevent stupid bug where tracer jumps up to origin when unparented
+    if not IsValid( self.tracer ) then return true end
+
+    self.tracer:SetPos( self:GetPos() ) -- use SetPos in think to prevent stupid bug where tracer jumps up to origin when unparented
 
     return true
 end

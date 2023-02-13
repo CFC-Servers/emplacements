@@ -18,8 +18,8 @@ ENT.angleRotateAroundAxis = -90
 function ENT:easyForwardAng()
     if not IsValid( self.shootPos ) then return end
     if not IsValid( self.Shooter ) then return end
-    return self.shootPos:GetAngles() + Angle( self.Shooter:EyeAngles().p, -90, 0 )
 
+    return self.shootPos:GetAngles() + Angle( self.Shooter:EyeAngles().p, -90, 0 )
 end
 
 function ENT:DoShot()
@@ -30,22 +30,23 @@ function ENT:DoShot()
             local effectdata = EffectData()
             effectdata:SetStart( vPoint )
             effectdata:SetOrigin( vPoint )
-            effectdata:SetAngles( effectPosAng.Ang + Angle( 0, -90, 0 ) )
+            effectdata:SetAttachment( self.MuzzleAttachment )
             effectdata:SetEntity( self )
-            effectdata:SetScale( 2 )
-            util.Effect( "MuzzleEffect", effectdata )
+            effectdata:SetScale( 1 )
+            effectdata:SetRadius( 100 )
+            util.Effect( "GunshipMuzzleFlash", effectdata )
             self:EmitSound( self.ShotSound, 60, 100 ) -- hiss
             self:EmitSound( "npc/sniper/sniper1.wav", 155, 60 ) -- echo
             self:EmitSound( "weapons/ar2/npc_ar2_altfire.wav", 155, 60 ) -- deep thunk
 
-            FireGlow = ents.Create( "env_sprite" ) -- bright flash
-            FireGlow:SetKeyValue( "model", "orangecore2.vmt" )
-            FireGlow:SetKeyValue( "rendercolor", "37 138 255" )
-            FireGlow:SetKeyValue( "scale", "5" )
-            FireGlow:SetPos( self:GetPos() + ( self:easyForwardAng():Forward() * 50 ) )
-            SafeRemoveEntityDelayed( FireGlow, 0.05 )
-            FireGlow:Spawn()
-            FireGlow:Activate()
+            local fireGlow = ents.Create( "env_sprite" ) -- bright flash
+            fireGlow:SetKeyValue( "model", "orangecore2.vmt" )
+            fireGlow:SetKeyValue( "rendercolor", "37 138 255" )
+            fireGlow:SetKeyValue( "scale", "5" )
+            fireGlow:SetPos( self:GetPos() + ( self:easyForwardAng():Forward() * 50 ) )
+            SafeRemoveEntityDelayed( fireGlow, 0.05 )
+            fireGlow:Spawn()
+            fireGlow:Activate()
 
             util.ScreenShake( self:GetPos(), 10, 20, 0.1, 1000 ) -- strong shake when close
             util.ScreenShake( self:GetPos(), 1, 20, 0.8, 4000 ) -- weak shake when far

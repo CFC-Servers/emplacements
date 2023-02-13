@@ -12,33 +12,31 @@ function ENT:Initialize()
     self:PhysicsInit( SOLID_VPHYSICS ) -- Make us work with physics,
     self:SetMoveType( MOVETYPE_NONE ) --after all, gmod is a physics
     self:SetSolid( SOLID_VPHYSICS ) -- CHEESECAKE!	>:3
-    Tracer = ents.Create( "env_spritetrail" )
-    Tracer:SetKeyValue( "lifetime", "1.5" )
-    Tracer:SetKeyValue( "startwidth", "100" )
-    Tracer:SetKeyValue( "endwidth", "30" )
-    Tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
-    Tracer:SetKeyValue( "rendermode", "5" )
-    Tracer:SetKeyValue( "rendercolor", "37 138 210" )
-    Tracer:SetPos( self:GetPos() )
-    Tracer:Spawn()
-    Tracer:Activate()
+    local tracer = ents.Create( "env_spritetrail" )
+    tracer:SetKeyValue( "lifetime", "1.5" )
+    tracer:SetKeyValue( "startwidth", "100" )
+    tracer:SetKeyValue( "endwidth", "30" )
+    tracer:SetKeyValue( "spritename", "trails/laser.vmt" )
+    tracer:SetKeyValue( "rendermode", "5" )
+    tracer:SetKeyValue( "rendercolor", "37 138 210" )
+    tracer:SetPos( self:GetPos() )
+    tracer:Spawn()
+    tracer:Activate()
 
-    self.Tracer = Tracer
+    self.Tracer = tracer
 
-    Glow = ents.Create( "env_sprite" )
-    Glow:SetKeyValue( "model", "orangecore2.vmt" )
-    Glow:SetKeyValue( "rendercolor", "37 138 210" )
-    Glow:SetKeyValue( "scale", "0.4" )
-    Glow:SetPos( self:GetPos() )
-    Glow:SetParent( self )
-    Glow:Spawn()
-    Glow:Activate()
+    local glow = ents.Create( "env_sprite" )
+    glow:SetKeyValue( "model", "orangecore2.vmt" )
+    glow:SetKeyValue( "rendercolor", "37 138 210" )
+    glow:SetKeyValue( "scale", "0.4" )
+    glow:SetPos( self:GetPos() )
+    glow:SetParent( self )
+    glow:Spawn()
+    glow:Activate()
+
 end
 
 function ENT:Splode( tr )
-
-    self.Tracer:SetPos( self:GetPos() )
-    SafeRemoveEntityDelayed( self.Tracer, 5 )
 
     -- damage equals 400 multipled by a bit less than the firing interval
     local baseDamage = 1188
@@ -82,12 +80,23 @@ function ENT:Splode( tr )
 
     self:Remove()
 
+    if not IsValid( self.Tracer ) then return end
+    self.Tracer:SetPos( self:GetPos() )
+    SafeRemoveEntityDelayed( self.Tracer, 5 )
+
 end
 
 function ENT:Think()
     if self.timeleft < CurTime() then
         self:Remove()
     end
+
+    local trace = {}
+    trace.start = self:GetPos()
+    trace.endpos = self:GetPos() + self.flightvector
+    trace.filter = self
+    trace.mask = bit.bxor( MASK_SHOT, MASK_WATER ) -- Trace for stuff that bullets would normally hit
+    local tr = util.TraceLine( trace )
 
     if self.AirburstTime < CurTime() then
         local owner = IsValid( self:GetOwner() ) and self:GetOwner()
@@ -101,13 +110,6 @@ function ENT:Think()
 
         self:Splode()
     end
-    
-    local trace = {}
-    trace.start = self:GetPos()
-    trace.endpos = self:GetPos() + self.flightvector
-    trace.filter = self
-    trace.mask = bit.bxor( MASK_SHOT, MASK_WATER ) -- Trace for stuff that bullets would normally hit
-    local tr = util.TraceLine( trace )
 
     if tr.Hit then
         if tr.HitSky then
@@ -135,6 +137,8 @@ function ENT:Think()
     self.flightvector = self.flightvector + ( Vector( math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ), math.Rand( -0.1, 0.1 ) ) + Vector( 0, 0, -0.01 ) )
     self:SetAngles( self.flightvector:Angle() )
     self:NextThink( CurTime() )
+
+    if not IsValid( self.Tracer ) then return true end
 
     self.Tracer:SetPos( self:GetPos() ) -- use SetPos in think to prevent stupid bug where tracer jumps up to origin when unparented
 
