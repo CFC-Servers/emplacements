@@ -133,7 +133,7 @@ function ENT:Think()
         if CLIENT and game.SinglePlayer() then
             pressKey = IN_ATTACK
         end
-        if shooter then
+        if IsValid( shooter ) then
             keyDown = shooter:KeyDown( pressKey )
 
             if not self.doneSetup and keyDown then
