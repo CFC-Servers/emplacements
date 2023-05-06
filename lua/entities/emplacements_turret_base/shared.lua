@@ -5,6 +5,8 @@ ENT.spawnSetupTime = 8
 ENT.angleInverse = 1
 ENT.angleRotateAroundAxis = -90
 
+local IsValid = IsValid
+
 function ENT:EmplacementSetupCheck()
     if not IsValid( self ) then return end
     if self.setup then return end
