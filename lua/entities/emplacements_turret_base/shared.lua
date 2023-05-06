@@ -5,6 +5,8 @@ ENT.spawnSetupTime = 8
 ENT.angleInverse = 1
 ENT.angleRotateAroundAxis = -90
 
+local IsValid = IsValid
+
 function ENT:EmplacementSetupCheck()
     if not IsValid( self ) then return end
     if self.setup then return end
@@ -133,7 +135,7 @@ function ENT:Think()
         if CLIENT and game.SinglePlayer() then
             pressKey = IN_ATTACK
         end
-        if shooter then
+        if IsValid( shooter ) then
             keyDown = shooter:KeyDown( pressKey )
 
             if not self.doneSetup and keyDown then
