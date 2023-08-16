@@ -106,7 +106,7 @@ function ENT:Think()
             end
         end
 
-        self:Explode()
+        self:Explode( tr )
     end
 
     if tr.Hit then
