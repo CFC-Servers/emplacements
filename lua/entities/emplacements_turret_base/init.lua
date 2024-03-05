@@ -4,10 +4,14 @@ include( "shared.lua" )
 
 ENT.BasePos = Vector( 0, 0, 0 )
 ENT.BaseAng = Angle( 0, 0, 0 )
+ENT.BaseMass = 500
 ENT.OffsetPos = Vector( 0, 0, 0 )
 ENT.OffsetAng = Angle( 0, 0, 0 )
+ENT.TurretHeadMass = 350
 ENT.Shooter = nil
 ENT.ShooterLast = nil
+
+ENT.DoReloadSound = nil
 
 ENT.turretModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretBaseModel = "models/hunter/blocks/cube025x025x025.mdl"
@@ -29,6 +33,7 @@ function ENT:Initialize()
     if IsValid( phys ) then
         phys:Wake()
         phys:SetVelocity( Vector( 0, 0, 0 ) )
+        phys:SetMass( self.TurretHeadMass )
     end
 
     self.ShadowParams = {}
@@ -55,6 +60,8 @@ function ENT:Initialize()
         pitchend = 110,
         sound = self.soundPath
     } )
+
+    self:EmplacementSetupCheck()
 end
 
 function ENT:CreateEmplacement()
@@ -63,8 +70,14 @@ function ENT:CreateEmplacement()
     turretBase:SetAngles( self:GetAngles() + Angle( 0, self.turretInitialAngle, 0 ) )
     turretBase:SetPos( self:GetPos() - Vector( 0, 0, 0 ) )
     turretBase:Spawn()
+    local obj = turretBase:GetPhysicsObject()
+    if IsValid( obj ) then
+        obj:SetMass( self.BaseMass )
+
+    end
     self.turretBase = turretBase
     constraint.NoCollide( self.turretBase, self, 0, 0 )
+
     local shootPos = ents.Create( "prop_dynamic" )
     shootPos:SetModel( "models/hunter/blocks/cube025x025x025.mdl" )
     shootPos:SetAngles( self:GetAngles() )
@@ -124,12 +137,14 @@ end
 
 function ENT:ApplyRecoil( randomMul, recoilMul, finalMul )
     if not self:IsValid() then return end
+    local obj = self:GetPhysicsObject()
 
     local randomComponent = VectorRand( -1, 1 ) * randomMul
     local recoilComponent = self:GetRight() * recoilMul
     local finalForce      = ( randomComponent + recoilComponent ) * finalMul
+    finalForce = finalForce * obj:GetMass()
 
-    self:GetPhysicsObject():ApplyForceCenter( finalForce )
+    obj:ApplyForceCenter( finalForce )
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )

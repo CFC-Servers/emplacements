@@ -4,15 +4,16 @@ ENT.Spawnable = false
 ENT.spawnSetupTime = 8
 ENT.angleInverse = 1
 ENT.angleRotateAroundAxis = -90
+ENT.doneSetupTime = math.huge
 
 local IsValid = IsValid
 
 function ENT:EmplacementSetupCheck()
-    if not IsValid( self ) then return end
     if self.setup then return end
     self.setup = true
 
-    timer.Simple( 0.2, function()
+    -- delay it so the sounds play properly
+    timer.Simple( 0.4, function()
         if not IsValid( self ) then return end
 
         --setup variable
@@ -22,9 +23,12 @@ function ENT:EmplacementSetupCheck()
         if self.longSpawnSetup then
             finalizeSoundTime = 4
             setupTime = 9
-            if not SERVER then return end
-            self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 ) -- this sound plays before the final sound so that the gun isn't just sitting there doing nothing
+            if SERVER then
+                self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 ) -- this sound plays before the final sound so that the gun isn't just sitting there doing nothing
+            end
         end
+
+        self.doneSetupTime = CurTime() + setupTime
 
         timer.Simple( finalizeSoundTime, function()
             if not IsValid( self ) then return end
@@ -127,8 +131,6 @@ function ENT:Think()
             self.OffsetPos = self.turretBase:GetAngles():Up()
         end
 
-        self:EmplacementSetupCheck()
-
         local shooter = self:GetShooter()
         local keyDown = nil
         local pressKey = IN_BULLRUSH
@@ -139,10 +141,12 @@ function ENT:Think()
             keyDown = shooter:KeyDown( pressKey )
 
             if not self.doneSetup and keyDown then
-                shooter:PrintMessage( 4, "The emplacement is still setting up!" )
+                local timeToDoneSetup = self.doneSetupTime - CurTime()
+                timeToDoneSetup = math.Round( timeToDoneSetup, 1 )
+                shooter:PrintMessage( HUD_PRINTCENTER, "The emplacement is setting up for " .. timeToDoneSetup .. " more seconds." )
                 if not self.doneClick then
                     self.doneClick = true
-                    self:EmitSound( "weapons/shotgun/shotgun_empty.wav", 70 )
+                    self:EmitSound( "weapons/shotgun/shotgun_empty.wav", 70, math.Rand( 95, 105 ), 1, CHAN_WEAPON )
                 end
             elseif not keyDown then
                 self.doneClick = nil
@@ -178,7 +182,15 @@ function ENT:Think()
         end
 
         if self.Firing then
-            self:DoShot()
+            local wasSuccessful = self:DoShot()
+            if wasSuccessful and self.DoReloadSound then
+                -- reloaded indicator
+                timer.Simple( self.ShotInterval + -0.5, function()
+                    if not IsValid( self ) then return end
+                    self:EmitSound( "weapons/shotgun/shotgun_cock.wav", 65, 90, 1, CHAN_STATIC )
+                    self:ApplyRecoil( 0.2, 1, -1000 )
+                end )
+            end
         end
 
         self:NextThink( CurTime() )

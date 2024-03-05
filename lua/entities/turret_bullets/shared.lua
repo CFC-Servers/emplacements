@@ -9,7 +9,7 @@ ENT.TurretFloatHeight = 3
 ENT.TurretModelOffset = Vector( 0, 0, 40 )
 ENT.TurretTurnMax = 0
 ENT.LastShot = 0
-ENT.ShotInterval = 0.07
+ENT.ShotInterval = 0.03
 ENT.longSpawnSetup = false
 
 ENT.angleInverse = 1
@@ -32,12 +32,12 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local bulletDamage = 500 * self.ShotInterval -- ensuring dps of var
+            local bulletDamage = 1250 * self.ShotInterval -- ensuring dps of var
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Forward() * 10,
                 Dir = self.shootPos:GetAngles():Forward() * 1,
-                Spread = Vector( 0.015, 0.015, 0 ),
+                Spread = Vector( 0.03, 0.03, 0 ),
                 Tracer = 0,
                 Force = bulletDamage,
                 Damage = bulletDamage,
@@ -55,9 +55,10 @@ function ENT:DoShot()
             } )
 
             --end
-            self:ApplyRecoil( 0.1, 1, 140000 )
+            self:ApplyRecoil( 0.1, 1, 1000 )
         end
 
         self.LastShot = CurTime()
+        return true
     end
 end

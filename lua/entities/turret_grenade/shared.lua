@@ -9,7 +9,7 @@ ENT.TurretFloatHeight = 3
 ENT.TurretModelOffset = Vector( 0, 0, 44 )
 ENT.TurretTurnMax = 0
 ENT.LastShot = 0
-ENT.ShotInterval = 0.55
+ENT.ShotInterval = 0.5
 ENT.longSpawnSetup = true
 
 ENT.angleInverse = -1
@@ -20,10 +20,13 @@ function ENT:DoShot()
         if SERVER then
             local effectPosAng = self:GetAttachment( self.MuzzleAttachment )
             local vPoint = effectPosAng.Pos
+            local angle = effectPosAng.Ang
+            angle:RotateAroundAxis( self:GetUp(), -90 )
+
             local effectdata = EffectData()
             effectdata:SetStart( vPoint )
             effectdata:SetOrigin( vPoint )
-            effectdata:SetAngles( effectPosAng.Ang + Angle( 0, -90, 0 ) )
+            effectdata:SetAngles( angle )
             effectdata:SetEntity( self )
             effectdata:SetScale( 1 )
             util.Effect( "MuzzleEffect", effectdata )
@@ -40,9 +43,10 @@ function ENT:DoShot()
             nade:SetOwner( self.Shooter )
             nade.flightvector = self:GetRight() * 35
             nade.Turret = self
-            self:ApplyRecoil( 0.1, 1, -15000 )
+            self:ApplyRecoil( 0.1, 1, -1500 )
         end
 
         self.LastShot = CurTime()
+        return true
     end
 end
