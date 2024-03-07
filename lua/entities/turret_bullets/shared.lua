@@ -7,23 +7,22 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = false
 ENT.TurretFloatHeight = 3
 ENT.TurretModelOffset = Vector( 0, 0, 40 )
+ENT.TurretModelAngOffset = Angle( 0, 90, 0 )
 ENT.TurretTurnMax = 0
-ENT.LastShot = 0
 ENT.ShotInterval = 0.03
-ENT.longSpawnSetup = false
+ENT.LongSpawnSetup = false
 
 ENT.angleInverse = 1
-ENT.angleRotateAroundAxis = 90
 
 function ENT:DoShot()
-    if self.LastShot + self.ShotInterval < CurTime() and self.doneSetup then
+    if self.lastShot + self.ShotInterval < CurTime() and self.doneSetup then
         if SERVER then
             local effectPosAng = self:GetAttachment( self.MuzzleAttachment )
             local vPoint = effectPosAng.Pos
             local effectdata = EffectData()
             effectdata:SetStart( vPoint )
             effectdata:SetOrigin( vPoint )
-            effectdata:SetAngles( effectPosAng.Ang )
+            effectdata:SetAngles( self:EasyForwardAng() )
             effectdata:SetEntity( self )
             effectdata:SetScale( 1 )
             util.Effect( "MuzzleEffect", effectdata )
@@ -36,12 +35,12 @@ function ENT:DoShot()
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Forward() * 10,
-                Dir = self.shootPos:GetAngles():Forward() * 1,
+                Dir = self:EasyForwardAng():Forward(),
                 Spread = Vector( 0.03, 0.03, 0 ),
                 Tracer = 0,
                 Force = bulletDamage,
                 Damage = bulletDamage,
-                Attacker = self.Shooter,
+                Attacker = self:GetShooter(),
                 Callback = function( _, trace )
 
                 local tracerEffect = EffectData()
@@ -58,7 +57,7 @@ function ENT:DoShot()
             self:ApplyRecoil( 0.1, 1, 1000 )
         end
 
-        self.LastShot = CurTime()
+        self.lastShot = CurTime()
         return true
     end
 end

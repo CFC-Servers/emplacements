@@ -4,20 +4,18 @@ include( "shared.lua" )
 
 ENT.BasePos = Vector( 0, 0, 0 )
 ENT.BaseAng = Angle( 0, 0, 0 )
-ENT.BaseMass = 500
+ENT.BaseMass = 150
 ENT.OffsetPos = Vector( 0, 0, 0 )
 ENT.OffsetAng = Angle( 0, 0, 0 )
-ENT.TurretHeadMass = 350
-ENT.Shooter = nil
+ENT.TurretHeadMass = 100
 ENT.ShooterLast = nil
 
-ENT.DoReloadSound = nil
+ENT.lastShot = 0
 
 ENT.turretModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretBaseModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretPos = 0
 ENT.turretInitialAngle = 0
-ENT.emplacementDisconnectRange = 110
 
 ENT.soundName = "sound_name"
 ENT.soundPath = "soundfile.wav"
@@ -95,40 +93,45 @@ function ENT:CreateEmplacement()
 end
 
 function ENT:OnRemove()
+    SafeRemoveEntityDelayed( self.turretBase, 0 )
     --> On remove fix!
-    if self.Shooter ~= nil then
-        net.Start( "TurretBlockAttackToggle" )
+    if not self:ShooterStillValid() then return end
+    net.Start( "TurretBlockAttackToggle" )
         net.WriteBit( false )
-        net.Send( self.Shooter )
-        self:SetShooter( nil )
-        self:FinishShooting()
-        self.Shooter = nil
-    end
-
-    SafeRemoveEntity( self.turretBase )
+    net.Send( self:GetShooter() )
+    self:SetShooter( nil )
+    self:FinishShooting()
 end
 
+hook.Add( "PlayerSwitchWeapon", "Emplacements_DisonnectOnWepSwitch", function( ply )
+    if not IsValid( ply.CurrentEmplacement ) then return end
+    ply.CurrentEmplacement:EmplacementDisconnect()
+
+end )
+
 function ENT:StartShooting()
-    self.Shooter:DrawViewModel( false )
+    local shooter = self:GetShooter()
+    shooter:DrawViewModel( false )
+    self:EmitSound( "Func_Tank.BeginUse" )
     net.Start( "TurretBlockAttackToggle" )
-    net.WriteBit( true )
-    net.Send( self.Shooter )
+        net.WriteBit( true )
+    net.Send( shooter )
 end
 
 function ENT:FinishShooting()
-    if IsValid( self.ShooterLast ) then
-        self.ShooterLast:DrawViewModel( true )
-        net.Start( "TurretBlockAttackToggle" )
+    if not IsValid( self.ShooterLast ) then return end
+    self.ShooterLast:DrawViewModel( true )
+    net.Start( "TurretBlockAttackToggle" )
         net.WriteBit( false )
-        net.Send( self.ShooterLast )
-        self.ShooterLast = nil
-    end
+    net.Send( self.ShooterLast )
+    self.ShooterLast = nil
 end
 
 function ENT:GetDesiredShootPos()
-    local playerTrace = util.GetPlayerTrace( self.Shooter )
+    local shooter = self:GetShooter()
+    local playerTrace = util.GetPlayerTrace( shooter )
 
-    playerTrace.filter = { self.Shooter, self, self.turretBase }
+    playerTrace.filter = { shooter, self, self.turretBase }
 
     local shootTrace = util.TraceLine( playerTrace )
 

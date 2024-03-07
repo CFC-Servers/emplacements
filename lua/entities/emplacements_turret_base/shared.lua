@@ -1,30 +1,58 @@
 ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
 ENT.Spawnable = false
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+
+ENT.Editable = false
+ENT.TurretModelAngOffset = Angle( 0, -90, 0 )
+ENT.DoCrosshair = true
+ENT.FiresSingles = nil
+ENT.EmplacementDisconnectRange = 110
+
 ENT.spawnSetupTime = 8
 ENT.angleInverse = 1
-ENT.angleRotateAroundAxis = -90
 ENT.doneSetupTime = math.huge
 
 local IsValid = IsValid
+
+function ENT:SetupDataTables()
+    self:NetworkVar( "Entity", 0, "Shooter" )
+    self:NetworkVar( "Entity", 1, "ShootPos" )
+    -- dont draw railgun crosshair on the projectile!
+    self:NetworkVar( "Bool", 0, "Reloaded" )
+
+    if SERVER then
+        self:SetReloaded( true )
+    end
+
+    self:NetworkVarNotify( "Shooter", function( me, _, old, new )
+        if IsValid( old ) then
+            old.CurrentEmplacement = nil
+        end
+        if IsValid( new ) then
+            new.CurrentEmplacement = me
+        end
+    end )
+end
 
 function ENT:EmplacementSetupCheck()
     if self.setup then return end
     self.setup = true
 
-    -- delay it so the sounds play properly
+    -- we are inside of initialize, delay all this logic so the sounds can actually play!
     timer.Simple( 0.4, function()
         if not IsValid( self ) then return end
 
-        --setup variable
+        --kinda spaghetti, setup time is based on the length of these sounds
+        --defaults to short setup, used by the machinegun turret
         local finalizeSoundTime = 0.1
         local setupTime = 4
 
-        if self.longSpawnSetup then
+        if self.LongSpawnSetup then
             finalizeSoundTime = 4
             setupTime = 9
             if SERVER then
-                self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 ) -- this sound plays before the final sound so that the gun isn't just sitting there doing nothing
+                self:EmitSound( "weapons/ar2/ar2_reload.wav", 70, 50 )
             end
         end
 
@@ -38,49 +66,21 @@ function ENT:EmplacementSetupCheck()
 
         timer.Simple( setupTime, function()
             if not IsValid( self ) then return end
-            self:EmitSound( "weapons/ar2/ar2_reload_push.wav", 150, 100 )
             self.doneSetup = true
+            if not SERVER then return end
+            self:EmitSound( "weapons/ar2/ar2_reload_push.wav", 150, 100 )
         end )
     end )
 end
 
-function ENT:SetupDataTables()
-    self:DTVar( "Entity", 0, "Shooter" )
-    self:DTVar( "Entity", 1, "ShootPos" )
-end
-
-function ENT:SetShooter( plr )
-    if IsValid( plr ) then
-        plr.CurrentEmplacement = self
-    elseif IsValid( self.Shooter ) then
-        self.Shooter.CurrentEmplacement = nil
-    end
-
-    self.Shooter = plr
-    self:SetDTEntity( 0, plr )
-end
-
-function ENT:GetShooter()
-    if SERVER then
-        return self.Shooter
-    elseif CLIENT then
-        return self:GetDTEntity( 0 )
-    end
-end
-
 function ENT:ShooterStillValid()
-    local shooter = nil
+    local shooter = self:GetShooter()
 
-    if SERVER then
-        shooter = self.Shooter
-    elseif CLIENT then
-        shooter = self:GetDTEntity( 0 )
-    end
     local shooterIsValid = IsValid( shooter ) and shooter:Alive()
     if not shooterIsValid then return false end
 
     local originPos = self:GetPos() + self.TurretModelOffset
-    local maxDistanceSqr = self.emplacementDisconnectRange * self.emplacementDisconnectRange
+    local maxDistanceSqr = self.EmplacementDisconnectRange * self.EmplacementDisconnectRange
     local distanceSqr = originPos:DistToSqr( shooter:GetShootPos() )
 
     return distanceSqr <= maxDistanceSqr
@@ -94,7 +94,7 @@ function ENT:EmplacementDisconnect()
 end
 
 function ENT:EmplacementConnect( plr )
-    if self.Shooter then return end
+    if self:ShooterStillValid() then return end
 
     local canConnect = hook.Run( "Emplacements_PlayerConnect", self, plr )
     if canConnect == false then return end
@@ -114,10 +114,14 @@ function ENT:Use( plr )
         end
         self:EmplacementConnect( plr )
     else
-        if plr == self.Shooter then
+        if plr == self:GetShooter() then
             self:EmplacementDisconnect()
         end
     end
+end
+
+function ENT:EasyForwardAng()
+    return self:LocalToWorldAngles( self.TurretModelAngOffset )
 end
 
 function ENT:Think()
@@ -166,7 +170,7 @@ function ENT:Think()
 
                 if offsetDot >= self.TurretTurnMax then
                     self.OffsetAng = offsetAng:Angle()
-                    self.OffsetAng:RotateAroundAxis( self.OffsetAng:Up(), self.angleRotateAroundAxis )
+                    self.OffsetAng:RotateAroundAxis( self.OffsetAng:Up(), self.TurretModelAngOffset.y )
                 end
             end
 
@@ -177,17 +181,20 @@ function ENT:Think()
         else
             if not SERVER then return end
             self.OffsetAng = self.turretBase:GetAngles()
-            if not self.Shooter then return end -- run this function once
+            if self:ShooterStillValid() then return end
             self:EmplacementDisconnect()
         end
 
         if self.Firing then
             local wasSuccessful = self:DoShot()
-            if wasSuccessful and self.DoReloadSound then
+            -- do a reload sound & 'animation?'
+            if wasSuccessful and self.FiresSingles then
+                self:SetReloaded( false )
                 -- reloaded indicator
                 timer.Simple( self.ShotInterval + -0.5, function()
                     if not IsValid( self ) then return end
-                    self:EmitSound( "weapons/shotgun/shotgun_cock.wav", 65, 90, 1, CHAN_STATIC )
+                    self:SetReloaded( true )
+                    self:EmitSound( "weapons/ar2/ar2_reload_rotate.wav", 65, 80, 1, CHAN_STATIC )
                     self:ApplyRecoil( 0.2, 1, -1000 )
                 end )
             end

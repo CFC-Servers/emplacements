@@ -7,24 +7,16 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = false
 ENT.TurretFloatHeight = 3
 ENT.TurretModelOffset = Vector( 0, 0, 44 )
+ENT.TurretModelAngOffset = Angle( 0, -90, 0 )
 ENT.TurretTurnMax = 0
-ENT.LastShot = 0
-ENT.ShotInterval = 6
-ENT.longSpawnSetup = true
-ENT.DoReloadSound = true
+ENT.ShotInterval = 8
+ENT.LongSpawnSetup = true
+ENT.FiresSingles = true
 
 ENT.angleInverse = -1
-ENT.angleRotateAroundAxis = -90
-
-function ENT:easyForwardAng()
-    if not IsValid( self.shootPos ) then return end
-    if not IsValid( self.Shooter ) then return end
-
-    return self.shootPos:GetAngles() + Angle( self.Shooter:EyeAngles().p, -90, 0 )
-end
 
 function ENT:DoShot()
-    if self.LastShot + self.ShotInterval < CurTime() and self.doneSetup then
+    if self.lastShot + self.ShotInterval < CurTime() and self.doneSetup then
         if SERVER then
             local effectPosAng = self:GetAttachment( self.MuzzleAttachment )
             local vPoint = effectPosAng.Pos
@@ -44,7 +36,7 @@ function ENT:DoShot()
             fireGlow:SetKeyValue( "model", "orangecore2.vmt" )
             fireGlow:SetKeyValue( "rendercolor", "37 138 255" )
             fireGlow:SetKeyValue( "scale", "5" )
-            fireGlow:SetPos( self:GetPos() + ( self:easyForwardAng():Forward() * 50 ) )
+            fireGlow:SetPos( self:GetPos() + ( self:EasyForwardAng():Forward() * 50 ) )
             SafeRemoveEntityDelayed( fireGlow, 0.05 )
             fireGlow:Spawn()
             fireGlow:Activate()
@@ -57,14 +49,14 @@ function ENT:DoShot()
         if IsValid( self.shootPos ) and SERVER then
             local nade = ents.Create( "rail_shell" )
             nade:SetPos( self.shootPos:GetPos() + self.shootPos:GetUp() * 30 )
-            nade:SetAngles( self:easyForwardAng() )
+            nade:SetAngles( self:EasyForwardAng() )
             nade:Spawn()
-            nade:SetOwner( self.Shooter )
+            nade:SetOwner( self:GetShooter() )
             nade.Turret = self
             self:ApplyRecoil( 0.2, 1, -45000 )
         end
 
-        self.LastShot = CurTime()
+        self.lastShot = CurTime()
         return true
     end
 end
