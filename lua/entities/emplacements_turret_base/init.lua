@@ -4,16 +4,18 @@ include( "shared.lua" )
 
 ENT.BasePos = Vector( 0, 0, 0 )
 ENT.BaseAng = Angle( 0, 0, 0 )
+ENT.BaseMass = 150
 ENT.OffsetPos = Vector( 0, 0, 0 )
 ENT.OffsetAng = Angle( 0, 0, 0 )
-ENT.Shooter = nil
+ENT.TurretHeadMass = 100
 ENT.ShooterLast = nil
+
+ENT.lastShot = 0
 
 ENT.turretModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretBaseModel = "models/hunter/blocks/cube025x025x025.mdl"
 ENT.turretPos = 0
 ENT.turretInitialAngle = 0
-ENT.emplacementDisconnectRange = 110
 
 ENT.soundName = "sound_name"
 ENT.soundPath = "soundfile.wav"
@@ -29,6 +31,7 @@ function ENT:Initialize()
     if IsValid( phys ) then
         phys:Wake()
         phys:SetVelocity( Vector( 0, 0, 0 ) )
+        phys:SetMass( self.TurretHeadMass )
     end
 
     self.ShadowParams = {}
@@ -55,6 +58,8 @@ function ENT:Initialize()
         pitchend = 110,
         sound = self.soundPath
     } )
+
+    self:EmplacementSetupCheck()
 end
 
 function ENT:CreateEmplacement()
@@ -63,8 +68,14 @@ function ENT:CreateEmplacement()
     turretBase:SetAngles( self:GetAngles() + Angle( 0, self.turretInitialAngle, 0 ) )
     turretBase:SetPos( self:GetPos() - Vector( 0, 0, 0 ) )
     turretBase:Spawn()
+    local obj = turretBase:GetPhysicsObject()
+    if IsValid( obj ) then
+        obj:SetMass( self.BaseMass )
+
+    end
     self.turretBase = turretBase
     constraint.NoCollide( self.turretBase, self, 0, 0 )
+
     local shootPos = ents.Create( "prop_dynamic" )
     shootPos:SetModel( "models/hunter/blocks/cube025x025x025.mdl" )
     shootPos:SetAngles( self:GetAngles() )
@@ -82,40 +93,45 @@ function ENT:CreateEmplacement()
 end
 
 function ENT:OnRemove()
+    SafeRemoveEntityDelayed( self.turretBase, 0 )
     --> On remove fix!
-    if self.Shooter ~= nil then
-        net.Start( "TurretBlockAttackToggle" )
+    if not self:ShooterStillValid() then return end
+    net.Start( "TurretBlockAttackToggle" )
         net.WriteBit( false )
-        net.Send( self.Shooter )
-        self:SetShooter( nil )
-        self:FinishShooting()
-        self.Shooter = nil
-    end
-
-    SafeRemoveEntity( self.turretBase )
+    net.Send( self:GetShooter() )
+    self:SetShooter( nil )
+    self:FinishShooting()
 end
 
+hook.Add( "PlayerSwitchWeapon", "Emplacements_DisonnectOnWepSwitch", function( ply )
+    if not IsValid( ply.CurrentEmplacement ) then return end
+    ply.CurrentEmplacement:EmplacementDisconnect()
+
+end )
+
 function ENT:StartShooting()
-    self.Shooter:DrawViewModel( false )
+    local shooter = self:GetShooter()
+    shooter:DrawViewModel( false )
+    self:EmitSound( "Func_Tank.BeginUse" )
     net.Start( "TurretBlockAttackToggle" )
-    net.WriteBit( true )
-    net.Send( self.Shooter )
+        net.WriteBit( true )
+    net.Send( shooter )
 end
 
 function ENT:FinishShooting()
-    if IsValid( self.ShooterLast ) then
-        self.ShooterLast:DrawViewModel( true )
-        net.Start( "TurretBlockAttackToggle" )
+    if not IsValid( self.ShooterLast ) then return end
+    self.ShooterLast:DrawViewModel( true )
+    net.Start( "TurretBlockAttackToggle" )
         net.WriteBit( false )
-        net.Send( self.ShooterLast )
-        self.ShooterLast = nil
-    end
+    net.Send( self.ShooterLast )
+    self.ShooterLast = nil
 end
 
 function ENT:GetDesiredShootPos()
-    local playerTrace = util.GetPlayerTrace( self.Shooter )
+    local shooter = self:GetShooter()
+    local playerTrace = util.GetPlayerTrace( shooter )
 
-    playerTrace.filter = { self.Shooter, self, self.turretBase }
+    playerTrace.filter = { shooter, self, self.turretBase }
 
     local shootTrace = util.TraceLine( playerTrace )
 
@@ -124,12 +140,14 @@ end
 
 function ENT:ApplyRecoil( randomMul, recoilMul, finalMul )
     if not self:IsValid() then return end
+    local obj = self:GetPhysicsObject()
 
     local randomComponent = VectorRand( -1, 1 ) * randomMul
     local recoilComponent = self:GetRight() * recoilMul
     local finalForce      = ( randomComponent + recoilComponent ) * finalMul
+    finalForce = finalForce * obj:GetMass()
 
-    self:GetPhysicsObject():ApplyForceCenter( finalForce )
+    obj:ApplyForceCenter( finalForce )
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )

@@ -35,9 +35,10 @@ function ENT:Initialize()
     glow:Activate()
 end
 
+-- damage equals 400 multipled by a bit less than the firing interval
+local baseDamage = 1188
+
 function ENT:Explode( tr )
-    -- damage equals 400 multipled by a bit less than the firing interval
-    local baseDamage = 1188
     local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
 
     local tightDamage = baseDamage * 0.66 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances

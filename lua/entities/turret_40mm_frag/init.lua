@@ -33,9 +33,10 @@ function ENT:Initialize()
     glow:Activate()
 end
 
+-- damage equals 400 multiplied by 75% of this turret's firing speed
+local baseDamage = 150
+
 function ENT:Explode()
-    -- damage equals 400 multiplied by two thirds of this turret's firing speed
-    local baseDamage = 120
     local origin = self:GetPos()
     local normal = self.flightvector:GetNormalized()
 
@@ -43,7 +44,7 @@ function ENT:Explode()
     local attacker = owner or self.Turret or self
     local inflictor = self
 
-    util.BlastDamage( inflictor, attacker, self:GetPos(), 400, baseDamage )
+    util.BlastDamage( inflictor, attacker, self:GetPos(), 450, baseDamage )
 
     local concrete = 67 -- has to be concrete else errors are spammed
     local effectdata = EffectData()
@@ -68,6 +69,7 @@ end
 function ENT:Think()
     if self.timeleft < CurTime() then
         self:Explode()
+        return
     end
 
     local trace = {}
