@@ -1,6 +1,6 @@
 if SERVER then
-    AddCSLuaFile()
     util.AddNetworkString( "TurretBlockAttackToggle" )
+    resource.AddWorkshop( "3188888751" )
 elseif CLIENT then
     local shouldBlockAttack = false
 
