@@ -51,18 +51,20 @@ function ENT:Explode( tr )
     util.BlastDamage( inflictor, attacker, tr.HitPos, 500, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
     util.BlastDamage( inflictor, attacker, tr.HitPos, 200, tightDamage )
 
-    local directDamage = 100
-    if tr.Entity:IsVehicle() then -- reward anyone insane enough to hit some lfs, or vehicle
-        directDamage = 400
-    end
+    if IsValid( tr.Entity ) then
+        local directDamage = 100
+        if tr.Entity:IsVehicle() then -- reward anyone insane enough to hit some lfs, or vehicle
+            directDamage = 400
+        end
 
-    local damage = DamageInfo()
-    damage:SetDamageType( DMG_BLAST )
-    damage:SetDamage( directDamage )
-    damage:SetDamageForce( self:GetForward() * 70000 )
-    damage:SetAttacker( attacker )
-    damage:SetInflictor( inflictor )
-    tr.Entity:TakeDamageInfo( damage )
+        local damage = DamageInfo()
+        damage:SetDamageType( DMG_BLAST )
+        damage:SetDamage( directDamage )
+        damage:SetDamageForce( self:GetForward() * 70000 )
+        damage:SetAttacker( attacker )
+        damage:SetInflictor( inflictor )
+        tr.Entity:TakeDamageInfo( damage )
+    end
 
     local concrete = 67 -- has to be concrete else errors are spammed
     local effectdata = EffectData()
