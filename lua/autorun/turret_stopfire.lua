@@ -1,3 +1,7 @@
+if CLIENT then
+    list.Set( "ContentCategoryIcons", "Emplacements", "materials/icon16/gun.png" )
+end
+
 if SERVER then
     util.AddNetworkString( "TurretBlockAttackToggle" )
     resource.AddWorkshop( "3188888751" )
