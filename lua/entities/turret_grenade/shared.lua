@@ -1,7 +1,7 @@
 ENT.Type = "anim"
 ENT.Base = "emplacements_turret_base"
 ENT.Category = "Emplacements"
-ENT.PrintName = "40MM HE Turret"
+ENT.PrintName = "40mm Grenade Turret"
 ENT.Author = "Wolly/BOT_09"
 ENT.Spawnable = true
 ENT.AdminSpawnable = false

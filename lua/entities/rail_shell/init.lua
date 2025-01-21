@@ -36,13 +36,13 @@ function ENT:Initialize()
 end
 
 -- damage equals 400 multipled by a bit less than the firing interval
-local baseDamage = 1188
+local baseDamage = 400 --1188
 
 function ENT:Explode( tr )
     local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
 
-    local tightDamage = baseDamage * 0.66 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
-    local wideDamage  = baseDamage * 0.33
+    local tightDamage = baseDamage * 0.33 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
+    local wideDamage  = baseDamage * 0.66
 
     local owner = IsValid( self:GetOwner() ) and self:GetOwner()
     local attacker = owner or self.Turret or self
