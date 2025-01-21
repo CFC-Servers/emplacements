@@ -25,7 +25,7 @@ local COOLING_TIME = 4
 
 -- How long it takes to spin up
 local SPINUP_TIME = 3
-local SPINDOWN_TIME = 5
+local SPINDOWN_TIME = 6
 
 local MIN_SHOT_INTERVAL = 0.15
 local MAX_SHOT_INTERVAL = 0.03
@@ -38,12 +38,14 @@ function ENT:Initialize()
         self.Heat = 0
         self.SpinUp = 0
         self.ShotInterval = MIN_SHOT_INTERVAL
+        self.RampUpSound = CreateSound( self, "vehicles/airboat/fan_motor_fullthrottle_loop1.wav" )
+        self.RampUpSound:PlayEx( 0, 0 )
     end
 end
 
 
 function ENT:Think()
-    BaseClass.Think( self )
+    local r = BaseClass.Think( self )
     
     if SERVER then
         if self.Firing then
@@ -61,16 +63,18 @@ function ENT:Think()
             smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,14 ) ) )
             smokeEffect:SetNormal( self:GetRight() )
             smokeEffect:SetScale( 20 * (heatPenalty+1) )
-            smokeEffect:SetScale( 40000 ) -- usain bolt speed
 
             util.Effect( "ElectricSpark", smokeEffect )
         end
 
-        self.ShotInterval = Lerp(self.SpinUp - heatPenalty, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL)
-        Entity(1):ChatPrint("Heat: " .. self.Heat .. "\nSpin: " .. self.SpinUp)
+        local totalSpinUp = self.SpinUp - heatPenalty
+        self.RampUpSound:ChangeVolume( totalSpinUp*3 )
+        self.RampUpSound:ChangePitch( 50 + totalSpinUp*100)
+
+        self.ShotInterval = Lerp(totalSpinUp, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL)
     end
 
-    return true
+    return r
 end
 
 
