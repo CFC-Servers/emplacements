@@ -42,7 +42,7 @@ function ENT:DoShot()
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Up() * 10,
                 Dir = self:EasyForwardAng():Forward() * 1,
-                Spread = Vector( 0.005, 0.005, 0 ),
+                Spread = Vector( 0.01, 0.01, 0 ),
                 Tracer = 0,
                 Force = bulletDamage,
                 Damage = bulletDamage,
