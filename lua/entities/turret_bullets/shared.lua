@@ -60,7 +60,7 @@ function ENT:Think()
 
         if heatPenalty > 0 then
             local smokeEffect = EffectData()
-            smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,14 ) ) )
+            smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,22 ) ) )
             smokeEffect:SetNormal( self:GetRight() )
             smokeEffect:SetScale( 20 * (heatPenalty+1) )
 
