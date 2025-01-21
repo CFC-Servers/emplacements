@@ -28,7 +28,7 @@ local SPINUP_TIME = 3
 local SPINDOWN_TIME = 6
 
 local MIN_SHOT_INTERVAL = 0.15
-local MAX_SHOT_INTERVAL = 0.03
+local MAX_SHOT_INTERVAL = 0.0225
 
 
 function ENT:Initialize()
@@ -68,8 +68,8 @@ function ENT:Think()
         end
 
         local totalSpinUp = self.SpinUp - heatPenalty
-        self.RampUpSound:ChangeVolume( totalSpinUp*3 )
-        self.RampUpSound:ChangePitch( 50 + totalSpinUp*100 )
+        self.RampUpSound:ChangeVolume( self.SpinUp*3 )
+        self.RampUpSound:ChangePitch( 50 + self.SpinUp*100 )
 
         self.ShotInterval = Lerp( totalSpinUp, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL )
     end
@@ -96,7 +96,7 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local bulletDamage = 1250 * MAX_SHOT_INTERVAL -- ensuring dps of var
+            local bulletDamage = 1400 * MAX_SHOT_INTERVAL -- ensuring dps of var
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Forward() * 10,
