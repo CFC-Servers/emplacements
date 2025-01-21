@@ -34,7 +34,7 @@ function ENT:Initialize()
 end
 
 -- damage equals 400 multiplied by 75% of this turret's firing speed
-local baseDamage = 150
+local baseDamage = 100
 
 function ENT:Explode()
     local origin = self:GetPos()
@@ -52,9 +52,9 @@ function ENT:Explode()
     effectdata:SetNormal( -normal ) -- Direction of Impact
     effectdata:SetStart( normal ) -- Direction of Round
     effectdata:SetEntity( self ) -- Who done it?
-    effectdata:SetScale( 0.8 ) -- Size of explosion
+    effectdata:SetScale( 1.5 ) -- Size of explosion
     effectdata:SetRadius( concrete ) -- Texture of Impact
-    effectdata:SetMagnitude( 16 ) -- Length of explosion trails
+    effectdata:SetMagnitude( 64 ) -- Length of explosion trails
     util.Effect( "gdca_airburst_t", effectdata )
     util.ScreenShake( origin, 10, 5, 1, 1300 )
     util.Decal( "Scorch", origin + normal, origin - normal )
