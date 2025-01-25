@@ -15,7 +15,7 @@ ENT.DoCrosshair = false
 
 ENT.angleInverse = -1
 
-local SPREAD = 0.15
+local SPREAD = 0.1
 local MUZZLE_VEL = 45
 
 function ENT:DoShot()
