@@ -78,6 +78,15 @@ function ENT:Think()
 end
 
 
+function ENT:OnRemove()
+    if SERVER then
+        self.RampUpSound:Stop()
+        self.RampUpSound = nil
+    end
+
+    BaseClass.OnRemove( self )
+end
+
 
 function ENT:DoShot()
     if self.lastShot + self.ShotInterval < CurTime() and self.doneSetup then
