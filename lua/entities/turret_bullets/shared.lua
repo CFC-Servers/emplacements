@@ -33,14 +33,13 @@ local MAX_SHOT_INTERVAL = 0.0225
 
 function ENT:Initialize()
     BaseClass.Initialize( self )
-
-    if SERVER then
-        self.Heat = 0
-        self.SpinUp = 0
-        self.ShotInterval = MIN_SHOT_INTERVAL
-        self.RampUpSound = CreateSound( self, "vehicles/airboat/fan_motor_fullthrottle_loop1.wav" )
-        self.RampUpSound:PlayEx( 0, 0 )
-    end
+    if not SERVER then return end
+    
+    self.Heat = 0
+    self.SpinUp = 0
+    self.ShotInterval = MIN_SHOT_INTERVAL
+    self.RampUpSound = CreateSound( self, "vehicles/airboat/fan_motor_fullthrottle_loop1.wav" )
+    self.RampUpSound:PlayEx( 0, 0 )
 end
 
 
