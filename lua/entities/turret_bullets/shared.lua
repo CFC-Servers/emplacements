@@ -43,34 +43,39 @@ function ENT:Initialize()
 end
 
 
+function ENT:RunHeatHandler()
+    if self.Firing then
+        self.Heat = math.min( self.Heat + FrameTime() / OVERHEAT_TIME, 1 )
+        self.SpinUp = math.min( self.SpinUp + FrameTime() / SPINUP_TIME, 1 )
+    else
+        self.Heat = math.max( self.Heat - FrameTime() / COOLING_TIME, 0 )
+        self.SpinUp = math.max( self.SpinUp - FrameTime() / SPINDOWN_TIME, 0 )
+    end
+
+    local heatPenalty = math.max( (self.Heat - 0.75) / 0.25 * 0.75, 0 )
+
+    if heatPenalty > 0 then
+        local smokeEffect = EffectData()
+        smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,22 ) ) )
+        smokeEffect:SetNormal( self:GetRight() )
+        smokeEffect:SetScale( 20 * (heatPenalty+1) )
+
+        util.Effect( "ElectricSpark", smokeEffect )
+    end
+
+    local totalSpinUp = self.SpinUp - heatPenalty
+    self.RampUpSound:ChangeVolume( self.SpinUp*3 )
+    self.RampUpSound:ChangePitch( 50 + self.SpinUp*100 )
+
+    self.ShotInterval = Lerp( totalSpinUp, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL )
+end
+
+
 function ENT:Think()
     local r = BaseClass.Think( self )
     
     if SERVER then
-        if self.Firing then
-            self.Heat = math.min( self.Heat + FrameTime() / OVERHEAT_TIME, 1 )
-            self.SpinUp = math.min( self.SpinUp + FrameTime() / SPINUP_TIME, 1 )
-        else
-            self.Heat = math.max( self.Heat - FrameTime() / COOLING_TIME, 0 )
-            self.SpinUp = math.max( self.SpinUp - FrameTime() / SPINDOWN_TIME, 0 )
-        end
-
-        local heatPenalty = math.max( (self.Heat - 0.75) / 0.25 * 0.75, 0 )
-
-        if heatPenalty > 0 then
-            local smokeEffect = EffectData()
-            smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,22 ) ) )
-            smokeEffect:SetNormal( self:GetRight() )
-            smokeEffect:SetScale( 20 * (heatPenalty+1) )
-
-            util.Effect( "ElectricSpark", smokeEffect )
-        end
-
-        local totalSpinUp = self.SpinUp - heatPenalty
-        self.RampUpSound:ChangeVolume( self.SpinUp*3 )
-        self.RampUpSound:ChangePitch( 50 + self.SpinUp*100 )
-
-        self.ShotInterval = Lerp( totalSpinUp, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL )
+        self:RunHeatHandler()
     end
 
     return r
