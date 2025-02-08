@@ -1,7 +1,7 @@
 ENT.Type = "anim"
 ENT.Base = "emplacements_turret_base"
 ENT.Category = "Emplacements"
-ENT.PrintName = "14mm Turret"
+ENT.PrintName = "Anti-Material Turret"
 ENT.Author = "Wolly/BOT_09"
 ENT.Spawnable = true
 ENT.AdminSpawnable = false
@@ -35,14 +35,14 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local fullDamage = 650 * self.ShotInterval -- ensuring dps of var
-            local bulletDamage = fullDamage * 0.66 --cutting up damage into two components
-            local explosiveDamage = fullDamage * 0.33
+            local fullDamage = 320 * self.ShotInterval -- ensuring dps of var
+            local bulletDamage = fullDamage * 0.5 --cutting up damage into two components
+            local explosiveDamage = fullDamage * 0.5
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Up() * 10,
                 Dir = self:EasyForwardAng():Forward() * 1,
-                Spread = Vector( 0.005, 0.005, 0 ),
+                Spread = Vector( 0.01, 0.01, 0 ),
                 Tracer = 0,
                 Force = bulletDamage,
                 Damage = bulletDamage,

@@ -1,7 +1,7 @@
 ENT.Type = "anim"
 ENT.Base = "emplacements_turret_base"
 ENT.Category = "Emplacements"
-ENT.PrintName = "40MM HE Turret"
+ENT.PrintName = "40mm Grenade Turret"
 ENT.Author = "Wolly/BOT_09"
 ENT.Spawnable = true
 ENT.AdminSpawnable = false
@@ -14,6 +14,9 @@ ENT.LongSpawnSetup = true
 ENT.DoCrosshair = false
 
 ENT.angleInverse = -1
+
+local SPREAD = 0.1
+local MUZZLE_VEL = 45
 
 function ENT:DoShot()
     if self.lastShot + self.ShotInterval < CurTime() and self.doneSetup then
@@ -39,7 +42,7 @@ function ENT:DoShot()
             nade:SetAngles( self:EasyForwardAng() )
             nade:Spawn()
             nade:SetOwner( self:GetShooter() )
-            nade.flightvector = self:GetRight() * 35
+            nade.flightvector = self:GetPhysicsObject():LocalToWorldVector( Vector( ( math.random()-0.5 )*SPREAD, -1, ( math.random()-0.5 )*SPREAD ) ):GetNormalized() * MUZZLE_VEL
             nade.Turret = self
             self:ApplyRecoil( 0.1, 1, -1500 )
         end
