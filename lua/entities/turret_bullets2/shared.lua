@@ -14,6 +14,8 @@ ENT.LongSpawnSetup = true
 
 ENT.angleInverse = -1
 
+ENT.PropDamageMultiplier = 0.75
+
 function ENT:DoShot()
     if self.lastShot + self.ShotInterval < CurTime() and self.doneSetup then
         if SERVER then
@@ -35,7 +37,7 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local fullDamage = 140
+            local fullDamage = 180
             local bulletDamage = fullDamage * 0.67 --cutting up damage into two components
             local explosiveDamage = fullDamage * 0.33
 
