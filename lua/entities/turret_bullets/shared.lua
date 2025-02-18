@@ -123,15 +123,18 @@ function ENT:DoShot()
                 Force = bulletDamage,
                 Damage = bulletDamage,
                 Attacker = self:GetShooter(),
-                Callback = function( _, trace )
+                Callback = function( _, trace, dmgInfo )
+                
+                    if IsValid(trace.Entity) and trace.Entity:IsVehicle() then
+                        dmgInfo:ScaleDamage( 0.5 )
+                    end
 
-                local tracerEffect = EffectData()
-                tracerEffect:SetStart( self.shootPos:GetPos() )
-                tracerEffect:SetOrigin( trace.HitPos )
-                tracerEffect:SetScale( 6000 ) --pretty fast
+                    local tracerEffect = EffectData()
+                    tracerEffect:SetStart( self.shootPos:GetPos() )
+                    tracerEffect:SetOrigin( trace.HitPos )
+                    tracerEffect:SetScale( 6000 ) --pretty fast
 
-                util.Effect( "StriderTracer", tracerEffect ) -- big but not too big effect
-
+                    util.Effect( "StriderTracer", tracerEffect ) -- big but not too big effect
                 end
             } )
 
