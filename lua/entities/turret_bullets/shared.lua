@@ -22,15 +22,15 @@ DEFINE_BASECLASS( "emplacements_turret_base" )
 
 
 -- The rate heat generates per second at peak firerate
-local OVERHEAT_TIME = 7
-local COOLING_TIME = 4
+local OVERHEAT_TIME = 14
+local COOLING_TIME = 7
 
 -- How long it takes to spin up
 local SPINUP_TIME = 3
 local SPINDOWN_TIME = 6
 
 local MIN_SHOT_INTERVAL = 0.15
-local MAX_SHOT_INTERVAL = 0.0225
+local MAX_SHOT_INTERVAL = 0.02
 
 
 function ENT:Initialize()
@@ -111,7 +111,9 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local bulletDamage = 1400 * MAX_SHOT_INTERVAL -- ensuring dps of var
+            local bulletDamage = 40
+            self:GetShooter():LagCompensation(true)
+
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Forward() * 10,
@@ -126,13 +128,15 @@ function ENT:DoShot()
                 local tracerEffect = EffectData()
                 tracerEffect:SetStart( self.shootPos:GetPos() )
                 tracerEffect:SetOrigin( trace.HitPos )
-                tracerEffect:SetScale( 8000 ) --pretty fast
+                tracerEffect:SetScale( 6000 ) --pretty fast
 
                 util.Effect( "StriderTracer", tracerEffect ) -- big but not too big effect
 
                 end
             } )
 
+            self:GetShooter():LagCompensation(false)
+            
             --end
             self:ApplyRecoil( 0.1, 1, 1000 )
         end
