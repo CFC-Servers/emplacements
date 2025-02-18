@@ -14,7 +14,7 @@ ENT.LongSpawnSetup = false
 
 ENT.angleInverse = 1
 
-ENT.PropDamageMultiplier = 0.5
+ENT.PropDamageMultiplier = 0.8
 
 
 DEFINE_BASECLASS( "emplacements_turret_base" )
