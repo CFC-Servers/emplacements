@@ -35,9 +35,12 @@ function ENT:DoShot()
         end
 
         if IsValid( self.shootPos ) and SERVER then
-            local fullDamage = 320 * self.ShotInterval -- ensuring dps of var
-            local bulletDamage = fullDamage * 0.5 --cutting up damage into two components
-            local explosiveDamage = fullDamage * 0.5
+            local fullDamage = 140
+            local bulletDamage = fullDamage * 0.67 --cutting up damage into two components
+            local explosiveDamage = fullDamage * 0.33
+
+            self:GetShooter():LagCompensation( true )
+
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Up() * 10,
@@ -47,7 +50,7 @@ function ENT:DoShot()
                 Force = bulletDamage,
                 Damage = bulletDamage,
                 Attacker = self:GetShooter(),
-                Callback = function( _, trace )
+                Callback = function( _, trace, dmgInfo )
                     local concrete = 67 -- has to be concrete else errors are spammed
                     local tracerEffect = EffectData()
                     tracerEffect:SetStart( self.shootPos:GetPos() )
@@ -56,6 +59,11 @@ function ENT:DoShot()
 
                     util.Effect( "AirboatGunHeavyTracer", tracerEffect ) -- BIG effect
                     if trace.HitSky then return end
+
+                    if IsValid(trace.Entity) and trace.Entity:IsVehicle() then
+                        dmgInfo:ScaleDamage( 0.35 )
+                        explosiveDamage = explosiveDamage * 0.35
+                    end
 
                     local inflictor = self:GetShooter() or self
                     util.BlastDamage( self, inflictor, trace.HitPos, 100, explosiveDamage ) -- explosion for anti armour power
@@ -70,7 +78,9 @@ function ENT:DoShot()
 
                 end
             } )
-
+            
+            self:GetShooter():LagCompensation( false )
+            
             self:ApplyRecoil( 0.05, 1, -7000 )
         end
 
