@@ -37,24 +37,29 @@ function ENT:Initialize()
     BaseClass.Initialize( self )
     if not SERVER then return end
     
-    self.Heat = 0
     self.SpinUp = 0
     self.ShotInterval = MIN_SHOT_INTERVAL
     self.RampUpSound = CreateSound( self, "vehicles/airboat/fan_motor_fullthrottle_loop1.wav" )
     self.RampUpSound:PlayEx( 0, 0 )
 end
 
+function ENT:SetupDataTables()
+    BaseClass.SetupDataTables( self )
+    self:NetworkVar("Float", 0, "Heat")
+end
+
+
 
 function ENT:RunHeatHandler()
     if self.Firing then
-        self.Heat = math.min( self.Heat + FrameTime() / OVERHEAT_TIME, 1 )
+        self:SetHeat( math.min( self:GetHeat() + FrameTime() / OVERHEAT_TIME, 1 ) )
         self.SpinUp = math.min( self.SpinUp + FrameTime() / SPINUP_TIME, 1 )
     else
-        self.Heat = math.max( self.Heat - FrameTime() / COOLING_TIME, 0 )
+        self:SetHeat( math.max( self:GetHeat() - FrameTime() / COOLING_TIME, 0 ) )
         self.SpinUp = math.max( self.SpinUp - FrameTime() / SPINDOWN_TIME, 0 )
     end
 
-    local heatPenalty = math.max( (self.Heat - 0.75) / 0.25 * 0.75, 0 )
+    local heatPenalty = math.max( (self:GetHeat() - 0.75) / 0.25 * 0.75, 0 )
 
     if heatPenalty > 0 then
         local smokeEffect = EffectData()
@@ -151,3 +156,17 @@ end
 
 
 
+if CLIENT then
+    function ENT:DrawTranslucent()
+        BaseClass.DrawTranslucent( self )
+
+        local heat = self:GetHeat()
+        local colorMul = ( 0.25 + heat ) * 15
+
+        render.SetBlend( heat^3 * 0.5 )
+        render.SetColorModulation( 1*colorMul, 0.25*colorMul, 0 )
+        self:DrawModel()
+        render.SetColorModulation( 0,0,0 )
+        render.SetBlend( 1 )
+    end    
+end
