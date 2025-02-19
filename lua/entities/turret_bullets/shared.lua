@@ -23,7 +23,7 @@ DEFINE_BASECLASS( "emplacements_turret_base" )
 
 -- The rate heat generates per second at peak firerate
 local OVERHEAT_TIME = 14
-local COOLING_TIME = 7
+local COOLING_TIME = 4
 
 -- How long it takes to spin up
 local SPINUP_TIME = 3
@@ -52,10 +52,10 @@ end
 
 function ENT:RunHeatHandler()
     if self.Firing then
-        self:SetHeat( math.min( self:GetHeat() + FrameTime() / OVERHEAT_TIME, 1 ) )
+        self:SetHeat( math.min( self:GetHeat() + FrameTime() / OVERHEAT_TIME * self.SpinUp, 1 ) )
         self.SpinUp = math.min( self.SpinUp + FrameTime() / SPINUP_TIME, 1 )
     else
-        self:SetHeat( math.max( self:GetHeat() - FrameTime() / COOLING_TIME, 0 ) )
+        self:SetHeat( math.max( self:GetHeat() - FrameTime() / COOLING_TIME * (1-self.SpinUp), 0 ) )
         self.SpinUp = math.max( self.SpinUp - FrameTime() / SPINDOWN_TIME, 0 )
     end
 
