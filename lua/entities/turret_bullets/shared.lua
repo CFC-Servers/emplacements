@@ -66,12 +66,13 @@ function ENT:RunHeatHandler()
         smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,22 ) ) )
         smokeEffect:SetNormal( self:GetRight() )
         smokeEffect:SetScale( 20 * (heatPenalty+1) )
+        smokeEffect:SetMagnitude( 0 )
 
         util.Effect( "ElectricSpark", smokeEffect )
     end
 
     local totalSpinUp = self.SpinUp - heatPenalty
-    self.RampUpSound:ChangeVolume( self.SpinUp*3 )
+    self.RampUpSound:ChangeVolume( self.SpinUp )
     self.RampUpSound:ChangePitch( 50 + self.SpinUp*100 )
 
     self.ShotInterval = Lerp( totalSpinUp, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL )
