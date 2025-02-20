@@ -177,6 +177,23 @@ function ENT:GravGunPickupAllowed()
     return false
 end
 
+function ENT:Use( plr )
+    if not plr:IsPlayer() then return end -- terms
+    if not self:ShooterStillValid() then
+        local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
+        if call == false then return end
+
+        if IsValid( plr.CurrentEmplacement ) then
+            plr.CurrentEmplacement:EmplacementDisconnect() -- hotswap emplacements! feels much better than being denied
+        end
+        self:EmplacementConnect( plr )
+    else
+        if plr == self:GetShooter() then
+            self:EmplacementDisconnect()
+        end
+    end
+end
+
 
 local toSafeKeep = {
     ShadowParams = true,

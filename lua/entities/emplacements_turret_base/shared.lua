@@ -104,22 +104,6 @@ function ENT:EmplacementConnect( plr )
     self.ShooterLast = plr
 end
 
-function ENT:Use( plr )
-    if not self:ShooterStillValid() then
-        local call = hook.Run( "Emplacements_PlayerWillEnter", self, plr )
-        if call == false then return end
-
-        if IsValid( plr.CurrentEmplacement ) then
-            plr.CurrentEmplacement:EmplacementDisconnect() -- hotswap emplacements! feels much better than being denied
-        end
-        self:EmplacementConnect( plr )
-    else
-        if plr == self:GetShooter() then
-            self:EmplacementDisconnect()
-        end
-    end
-end
-
 function ENT:EasyForwardAng()
     return self:LocalToWorldAngles( self.TurretModelAngOffset )
 end
