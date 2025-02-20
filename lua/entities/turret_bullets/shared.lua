@@ -99,7 +99,7 @@ end
 
 
 function ENT:OnRemove()
-    if SERVER then
+    if SERVER and self.RampUpSound then
         self.RampUpSound:Stop()
         self.RampUpSound = nil
     end

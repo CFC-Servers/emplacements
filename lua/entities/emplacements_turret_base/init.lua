@@ -37,9 +37,7 @@ function ENT:Initialize()
     self.ShadowParams = {}
     self:StartMotionController()
 
-    if not IsValid( self.turretBase ) then
-        self:CreateEmplacement()
-    end
+    self:CreateEmplacement()
 
     self.ShotSound = Sound( self.soundName )
     self:SetUseType( SIMPLE_USE )
@@ -64,11 +62,15 @@ end
 
 function ENT:CreateEmplacement()
     local turretBase = ents.Create( "prop_physics" )
+    turretBase.DoNotDuplicate = true
+
+    self:DeleteOnRemove( turretBase )
+    turretBase:DeleteOnRemove( self )
+
     turretBase:SetModel( self.turretBaseModel )
     turretBase:SetAngles( self:GetAngles() + Angle( 0, self.turretInitialAngle, 0 ) )
     turretBase:SetPos( self:GetPos() - Vector( 0, 0, 0 ) )
     turretBase:Spawn()
-    turretBase.DoNotDuplicate = true
 
     local obj = turretBase:GetPhysicsObject()
     if IsValid( obj ) then
@@ -100,8 +102,6 @@ function ENT:CreateEmplacement()
 end
 
 function ENT:OnRemove()
-    SafeRemoveEntityDelayed( self.turretBase, 0 )
-    --> On remove fix!
     if not self:ShooterStillValid() then return end
     net.Start( "TurretBlockAttackToggle" )
         net.WriteBit( false )
@@ -175,4 +175,30 @@ end
 
 function ENT:GravGunPickupAllowed()
     return false
+end
+
+
+local toSafeKeep = {
+    ShadowParams = true,
+    shootPos = true,
+    turretBase = true,
+}
+local safeKeeping
+
+function ENT:PreEntityCopy() -- fix hydra emplacement bug
+    safeKeeping = {}
+
+    for name, _ in pairs( toSafeKeep ) do
+        safeKeeping[name] = self[name]
+        self[name] = nil
+    end
+end
+
+function ENT:PostEntityCopy()
+    for name, _ in pairs( toSafeKeep ) do
+        self[name] = safeKeeping[name]
+
+    end
+
+    safeKeeping = nil
 end
