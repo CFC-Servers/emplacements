@@ -36,7 +36,7 @@ local MAX_SHOT_INTERVAL = 0.02
 function ENT:Initialize()
     BaseClass.Initialize( self )
     if not SERVER then return end
-    
+
     self.SpinUp = 0
     self.ShotInterval = MIN_SHOT_INTERVAL
     self.RampUpSound = CreateSound( self, "vehicles/airboat/fan_motor_fullthrottle_loop1.wav" )
@@ -45,7 +45,7 @@ end
 
 function ENT:SetupDataTables()
     BaseClass.SetupDataTables( self )
-    self:NetworkVar("Float", 0, "Heat")
+    self:NetworkVar( "Float", 0, "Heat" )
 end
 
 
@@ -55,17 +55,17 @@ function ENT:RunHeatHandler()
         self:SetHeat( math.min( self:GetHeat() + FrameTime() / OVERHEAT_TIME * self.SpinUp, 1 ) )
         self.SpinUp = math.min( self.SpinUp + FrameTime() / SPINUP_TIME, 1 )
     else
-        self:SetHeat( math.max( self:GetHeat() - FrameTime() / COOLING_TIME * (1-self.SpinUp), 0 ) )
+        self:SetHeat( math.max( self:GetHeat() - FrameTime() / COOLING_TIME * ( 1 - self.SpinUp ), 0 ) )
         self.SpinUp = math.max( self.SpinUp - FrameTime() / SPINDOWN_TIME, 0 )
     end
 
-    local heatPenalty = math.max( (self:GetHeat() - 0.75) / 0.25 * 0.75, 0 )
+    local heatPenalty = math.max( ( self:GetHeat() - 0.75 ) / 0.25 * 0.75, 0 )
 
     if heatPenalty > 0 then
         local smokeEffect = EffectData()
         smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,22 ) ) )
         smokeEffect:SetNormal( self:GetRight() )
-        smokeEffect:SetScale( 20 * (heatPenalty+1) )
+        smokeEffect:SetScale( 20 * ( heatPenalty + 1 ) )
         smokeEffect:SetMagnitude( 0 )
 
         util.Effect( "ElectricSpark", smokeEffect )
@@ -73,7 +73,7 @@ function ENT:RunHeatHandler()
 
     local totalSpinUp = self.SpinUp - heatPenalty
     self.RampUpSound:ChangeVolume( self.SpinUp )
-    self.RampUpSound:ChangePitch( 50 + self.SpinUp*100 )
+    self.RampUpSound:ChangePitch( 50 + self.SpinUp * 100 )
 
     self.ShotInterval = Lerp( totalSpinUp, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL )
 end
@@ -81,7 +81,7 @@ end
 
 function ENT:Think()
     local r = BaseClass.Think( self )
-    
+
     if SERVER then
         self:RunHeatHandler()
     end
@@ -118,7 +118,6 @@ function ENT:DoShot()
 
         if IsValid( self.shootPos ) and SERVER then
             local bulletDamage = 40
-            self:GetShooter():LagCompensation(true)
 
             self.shootPos:FireBullets( {
                 Num = 1,
@@ -130,8 +129,8 @@ function ENT:DoShot()
                 Damage = bulletDamage,
                 Attacker = self:GetShooter(),
                 Callback = function( _, trace, dmgInfo )
-                
-                    if IsValid(trace.Entity) and trace.Entity:IsVehicle() then
+
+                    if IsValid( trace.Entity ) and trace.Entity:IsVehicle() then
                         dmgInfo:ScaleDamage( 0.5 )
                     end
 
@@ -144,8 +143,6 @@ function ENT:DoShot()
                 end
             } )
 
-            self:GetShooter():LagCompensation(false)
-            
             --end
             self:ApplyRecoil( 0.1, 1, 1000 )
         end
@@ -165,9 +162,9 @@ if CLIENT then
         local colorMul = ( 0.25 + heat ) * 15
 
         render.SetBlend( heat^3 * 0.5 )
-        render.SetColorModulation( 1*colorMul, 0.25*colorMul, 0 )
+        render.SetColorModulation( 1 * colorMul, 0.25 * colorMul, 0 )
         self:DrawModel()
         render.SetColorModulation( 0,0,0 )
         render.SetBlend( 1 )
-    end    
+    end
 end

@@ -42,7 +42,8 @@ function ENT:DoShot()
             nade:SetAngles( self:EasyForwardAng() )
             nade:Spawn()
             nade:SetOwner( self:GetShooter() )
-            nade.flightvector = self:GetPhysicsObject():LocalToWorldVector( Vector( ( math.random()-0.5 )*SPREAD, -1, ( math.random()-0.5 )*SPREAD ) ):GetNormalized() * MUZZLE_VEL
+            local dir = Vector( ( math.random() - 0.5 ) * SPREAD, -1, ( math.random() - 0.5 ) * SPREAD )
+            nade.flightvector = self:GetPhysicsObject():LocalToWorldVector( dir ):GetNormalized() * MUZZLE_VEL
             nade.Turret = self
             self:ApplyRecoil( 0.1, 1, -1500 )
         end

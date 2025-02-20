@@ -23,7 +23,7 @@ function ENT:Initialize()
     tracer:SetPos( self:GetPos() )
     tracer:Spawn()
     tracer:Activate()
-    
+
     self.Tracer = tracer
 
     local glow = ents.Create( "env_sprite" )

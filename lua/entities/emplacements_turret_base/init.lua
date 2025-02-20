@@ -69,7 +69,7 @@ function ENT:CreateEmplacement()
     turretBase:SetPos( self:GetPos() - Vector( 0, 0, 0 ) )
     turretBase:Spawn()
     turretBase.DoNotDuplicate = true
-    
+
     local obj = turretBase:GetPhysicsObject()
     if IsValid( obj ) then
         obj:SetMass( self.BaseMass )
