@@ -68,11 +68,17 @@ function ENT:CreateEmplacement()
     turretBase:SetAngles( self:GetAngles() + Angle( 0, self.turretInitialAngle, 0 ) )
     turretBase:SetPos( self:GetPos() - Vector( 0, 0, 0 ) )
     turretBase:Spawn()
+    turretBase.DoNotDuplicate = true
+    
     local obj = turretBase:GetPhysicsObject()
     if IsValid( obj ) then
         obj:SetMass( self.BaseMass )
-
     end
+
+    if CPPI then
+        turretBase:CPPISetOwner( self:CPPIGetOwner() )
+    end
+
     self.turretBase = turretBase
     constraint.NoCollide( self.turretBase, self, 0, 0 )
 
@@ -88,6 +94,7 @@ function ENT:CreateEmplacement()
     shootPos:SetNoDraw( false )
     shootPos:DrawShadow( false )
     shootPos.EmplacementTurret = self
+    shootPos.PropDamageMultiplier = self.PropDamageMultiplier
     --shootPos:SetColor(Color(0,0,0,0))
     self:SetDTEntity( 1, shootPos )
 end

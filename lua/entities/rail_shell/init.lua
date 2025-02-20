@@ -4,6 +4,7 @@ include( "shared.lua" )
 
 local IsValid = IsValid
 
+
 function ENT:Initialize()
     self.flightvector = self:GetForward() * 300
     self.timeleft = CurTime() + 5
@@ -22,7 +23,7 @@ function ENT:Initialize()
     tracer:SetPos( self:GetPos() )
     tracer:Spawn()
     tracer:Activate()
-
+    
     self.Tracer = tracer
 
     local glow = ents.Create( "env_sprite" )
@@ -36,13 +37,13 @@ function ENT:Initialize()
 end
 
 -- damage equals 400 multipled by a bit less than the firing interval
-local baseDamage = 400 --1188
+local baseDamage = 600 --1188
 
 function ENT:Explode( tr )
     local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
 
-    local tightDamage = baseDamage * 0.33 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
-    local wideDamage  = baseDamage * 0.66
+    local tightDamage = baseDamage * 0.5 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
+    local wideDamage  = baseDamage * 0.5
 
     local owner = IsValid( self:GetOwner() ) and self:GetOwner()
     local attacker = owner or self.Turret or self
