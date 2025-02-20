@@ -39,8 +39,6 @@ function ENT:Initialize()
 
     self.SpinUp = 0
     self.ShotInterval = MIN_SHOT_INTERVAL
-    self.RampUpSound = CreateSound( self, "vehicles/airboat/fan_motor_fullthrottle_loop1.wav" )
-    self.RampUpSound:PlayEx( 0, 0 )
 end
 
 function ENT:SetupDataTables()
@@ -72,8 +70,18 @@ function ENT:RunHeatHandler()
     end
 
     local totalSpinUp = self.SpinUp - heatPenalty
-    self.RampUpSound:ChangeVolume( self.SpinUp )
-    self.RampUpSound:ChangePitch( 50 + self.SpinUp * 100 )
+    local volume = self:GetHeat()
+    if volume > 0.05 then
+        if not self.RampUpSound or not self.RampUpSound:IsPlaying() then
+            self.RampUpSound = CreateSound( self, "ambient/gas/steam2.wav" ) -- stopsound compatible
+            self.RampUpSound:PlayEx( 0.05, 0 )
+        else
+            self.RampUpSound:ChangeVolume( volume )
+            self.RampUpSound:ChangePitch( 25 + volume * 100 )
+        end
+    elseif self.RampUpSound and self.RampUpSound:IsPlaying() then
+        self.RampUpSound:Stop()
+    end
 
     self.ShotInterval = Lerp( totalSpinUp, MIN_SHOT_INTERVAL, MAX_SHOT_INTERVAL )
 end
