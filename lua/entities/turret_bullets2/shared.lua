@@ -41,8 +41,6 @@ function ENT:DoShot()
             local bulletDamage = fullDamage * 0.67 --cutting up damage into two components
             local explosiveDamage = fullDamage * 0.33
 
-            self:GetShooter():LagCompensation( true )
-
             self.shootPos:FireBullets( {
                 Num = 1,
                 Src = self.shootPos:GetPos() + self.shootPos:GetAngles():Up() * 10,
@@ -62,7 +60,7 @@ function ENT:DoShot()
                     util.Effect( "AirboatGunHeavyTracer", tracerEffect ) -- BIG effect
                     if trace.HitSky then return end
 
-                    if IsValid(trace.Entity) and trace.Entity:IsVehicle() then
+                    if IsValid( trace.Entity ) and trace.Entity:IsVehicle() then
                         dmgInfo:ScaleDamage( 0.35 )
                         explosiveDamage = explosiveDamage * 0.35
                     end
@@ -80,9 +78,7 @@ function ENT:DoShot()
 
                 end
             } )
-            
-            self:GetShooter():LagCompensation( false )
-            
+
             self:ApplyRecoil( 0.05, 1, -7000 )
         end
 
