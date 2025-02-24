@@ -61,7 +61,7 @@ function ENT:RunHeatHandler()
 
     if heatPenalty > 0 then
         local smokeEffect = EffectData()
-        smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0,35,22 ) ) )
+        smokeEffect:SetOrigin( self:LocalToWorld( Vector( 0, 35, 22 ) ) )
         smokeEffect:SetNormal( self:GetRight() )
         smokeEffect:SetScale( 20 * ( heatPenalty + 1 ) )
         smokeEffect:SetMagnitude( 0 )
@@ -172,7 +172,7 @@ if CLIENT then
         render.SetBlend( heat^3 * 0.5 )
         render.SetColorModulation( 1 * colorMul, 0.25 * colorMul, 0 )
         self:DrawModel()
-        render.SetColorModulation( 0,0,0 )
+        render.SetColorModulation( 0, 0, 0 )
         render.SetBlend( 1 )
     end
 end
