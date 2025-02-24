@@ -4,24 +4,24 @@
 -- 1     2     3      4      5      6      7      8         9
 --Dust, Dirt, Sand, Metal, Smoke, Wood,  Glass, Blood, YellowBlood
 local mats = {
-    [ MAT_ALIENFLESH ] = { 5, 9 },
-    [ MAT_ANTLION ] = { 5, 9 },
-    [ MAT_BLOODYFLESH ] = { 5, 8 },
-    [ MAT_CLIP ] = { 3, 5 },
-    [ MAT_COMPUTER ] = { 4, 5 },
-    [ MAT_FLESH ] = { 5, 8 },
-    [ MAT_GRATE ] = { 3, 4 },
-    [ MAT_METAL ] = { 3, 4 },
-    [ MAT_PLASTIC ] = { 2, 5 },
-    [ MAT_SLOSH ] = { 5, 5 },
-    [ MAT_VENT ] = { 3, 4 },
-    [ MAT_FOLIAGE ] = { 1, 5 },
-    [ MAT_TILE ] = { 2, 5 },
-    [ MAT_CONCRETE ] = { 2, 1 },
-    [ MAT_DIRT ] = { 1, 2 },
-    [ MAT_SAND ] = { 1, 3 },
-    [ MAT_WOOD ] = { 2, 6 },
-    [ MAT_GLASS ] = { 4, 7 },
+    [MAT_ALIENFLESH] = { 5, 9 },
+    [MAT_ANTLION] = { 5, 9 },
+    [MAT_BLOODYFLESH] = { 5, 8 },
+    [MAT_CLIP] = { 3, 5 },
+    [MAT_COMPUTER] = { 4, 5 },
+    [MAT_FLESH] = { 5, 8 },
+    [MAT_GRATE] = { 3, 4 },
+    [MAT_METAL] = { 3, 4 },
+    [MAT_PLASTIC] = { 2, 5 },
+    [MAT_SLOSH] = { 5, 5 },
+    [MAT_VENT] = { 3, 4 },
+    [MAT_FOLIAGE] = { 1, 5 },
+    [MAT_TILE] = { 2, 5 },
+    [MAT_CONCRETE] = { 2, 1 },
+    [MAT_DIRT] = { 1, 2 },
+    [MAT_SAND] = { 1, 3 },
+    [MAT_WOOD] = { 2, 6 },
+    [MAT_GLASS] = { 4, 7 },
 }
 
 function EFFECT:Init( data )
@@ -32,24 +32,24 @@ function EFFECT:Init( data )
     self.Emitter = ParticleEmitter( self.Origin )
     self.Mat = math.ceil( self.Radius )
 
-    if ( self.Mat ~= nil ) then
-        if mats[ self.Mat ][ 2 ] == 1 then
+    if self.Mat ~= nil then
+        if mats[self.Mat][2] == 1 then
             self:Dust()
-        elseif mats[ self.Mat ][ 2 ] == 2 then
+        elseif mats[self.Mat][2] == 2 then
             self:Dirt()
-        elseif mats[ self.Mat ][ 2 ] == 3 then
+        elseif mats[self.Mat][2] == 3 then
             self:Sand()
-        elseif mats[ self.Mat ][ 2 ] == 4 then
+        elseif mats[self.Mat][2] == 4 then
             self:Metal()
-        elseif mats[ self.Mat ][ 2 ] == 5 then
+        elseif mats[self.Mat][2] == 5 then
             self:Smoke()
-        elseif mats[ self.Mat ][ 2 ] == 6 then
+        elseif mats[self.Mat][2] == 6 then
             self:Wood()
-        elseif mats[ self.Mat ][ 2 ] == 7 then
+        elseif mats[self.Mat][2] == 7 then
             self:Glass()
-        elseif mats[ self.Mat ][ 2 ] == 8 then
+        elseif mats[self.Mat][2] == 8 then
             self:Blood()
-        elseif mats[ self.Mat ][ 2 ] == 9 then
+        elseif mats[self.Mat][2] == 9 then
             self:YellowBlood()
         else
             self:Smoke()
@@ -66,7 +66,7 @@ function EFFECT:Dust()
     for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particles/smokey", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 0, 500 * self.Scale ) + VectorRand():GetNormalized() * 100 * self.Scale )
             Smoke:SetDieTime( math.Rand( 1, 2.5 ) * self.Scale )
             Smoke:SetStartAlpha( math.Rand( 80, 100 ) )
@@ -84,7 +84,7 @@ function EFFECT:Dust()
     for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 0, 400 * self.Scale ) + VectorRand():GetNormalized() * 20 * self.Scale )
             Smoke:SetDieTime( math.Rand( 0.5, 1.5 ) * self.Scale )
             Smoke:SetStartAlpha( 150 )
@@ -102,7 +102,7 @@ function EFFECT:Dust()
     for _ = 0, 10 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Origin )
 
-        if ( Debris ) then
+        if Debris then
             Debris:SetVelocity( self.DirVec * math.random( 200, 300 * self.Scale ) + VectorRand():GetNormalized() * 300 * self.Scale )
             Debris:SetDieTime( math.random( 0.6, 1 ) )
             Debris:SetStartAlpha( 255 )
@@ -121,7 +121,7 @@ function EFFECT:Dust()
     for _ = 0, 1 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
-        if ( Flash ) then
+        if Flash then
             Flash:SetVelocity( self.DirVec * 100 )
             Flash:SetAirResistance( 200 )
             Flash:SetDieTime( 0.1 )
@@ -143,7 +143,7 @@ function EFFECT:Dirt()
     for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particles/smokey", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 0, 500 * self.Scale ) + VectorRand():GetNormalized() * 100 * self.Scale )
             Smoke:SetDieTime( math.Rand( 1, 2.5 ) * self.Scale )
             Smoke:SetStartAlpha( math.Rand( 80, 100 ) )
@@ -161,7 +161,7 @@ function EFFECT:Dirt()
     for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 0, 400 * self.Scale ) + VectorRand():GetNormalized() * 20 * self.Scale )
             Smoke:SetDieTime( math.Rand( 0.5, 1.5 ) * self.Scale )
             Smoke:SetStartAlpha( 200 )
@@ -179,7 +179,7 @@ function EFFECT:Dirt()
     for _ = 0, 15 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_cement" .. math.random( 1, 2 ), self.Origin )
 
-        if ( Debris ) then
+        if Debris then
             Debris:SetVelocity( self.DirVec * math.random( 200, 300 * self.Scale ) + VectorRand():GetNormalized() * 300 * self.Scale )
             Debris:SetDieTime( math.random( 0.75, 1.25 ) )
             Debris:SetStartAlpha( 255 )
@@ -198,7 +198,7 @@ function EFFECT:Dirt()
     for _ = 0, 1 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
-        if ( Flash ) then
+        if Flash then
             Flash:SetVelocity( self.DirVec * 100 )
             Flash:SetAirResistance( 200 )
             Flash:SetDieTime( 0.1 )
@@ -220,7 +220,7 @@ function EFFECT:Sand()
     for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particles/smokey", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 0, 500 * self.Scale ) + VectorRand():GetNormalized() * 100 * self.Scale )
             Smoke:SetDieTime( math.Rand( 1, 2.5 ) * self.Scale )
             Smoke:SetStartAlpha( math.Rand( 60, 80 ) )
@@ -238,7 +238,7 @@ function EFFECT:Sand()
     for _ = 0, 20 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 0, 400 * self.Scale ) + VectorRand():GetNormalized() * 20 * self.Scale )
             Smoke:SetDieTime( math.Rand( 0.5, 1.5 ) * self.Scale )
             Smoke:SetStartAlpha( 150 )
@@ -261,7 +261,7 @@ function EFFECT:Metal()
     for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 0, 50 * self.Scale ) + VectorRand():GetNormalized() * 200 * self.Scale )
             Smoke:SetDieTime( math.Rand( 3, 7 ) * self.Scale )
             Smoke:SetStartAlpha( math.Rand( 50, 70 ) )
@@ -279,7 +279,7 @@ function EFFECT:Metal()
     for _ = 0, 3 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
-        if ( Flash ) then
+        if Flash then
             Flash:SetVelocity( self.DirVec * 100 )
             Flash:SetAirResistance( 200 )
             Flash:SetDieTime( 0.1 )
@@ -296,7 +296,7 @@ function EFFECT:Metal()
     for _ = 0, 20 * self.Scale do
         local particle = self.Emitter:Add( "effects/spark", self.Origin )
 
-        if ( particle ) then
+        if particle then
             particle:SetVelocity( ( ( self.DirVec * 0.75 ) + VectorRand() ) * math.Rand( 50, 300 ) * self.Scale )
             particle:SetDieTime( math.Rand( 0.3, 0.5 ) )
             particle:SetStartAlpha( 255 )
@@ -317,7 +317,7 @@ function EFFECT:Smoke()
     for _ = 0, 15 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 20, 70 * self.Scale ) + VectorRand():GetNormalized() * 150 * self.Scale )
             Smoke:SetDieTime( math.Rand( 3, 7 ) * self.Scale )
             Smoke:SetStartAlpha( math.Rand( 50, 70 ) )
@@ -335,7 +335,7 @@ function EFFECT:Smoke()
     for _ = 0, 15 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_tile" .. math.random( 1, 2 ), self.Origin )
 
-        if ( Debris ) then
+        if Debris then
             Debris:SetVelocity( self.DirVec * math.random( 50, 100 * self.Scale ) + VectorRand():GetNormalized() * 300 * self.Scale )
             Debris:SetDieTime( math.random( 0.75, 1 ) )
             Debris:SetStartAlpha( 255 )
@@ -354,7 +354,7 @@ function EFFECT:Smoke()
     for _ = 0, 1 do
         local Flash = self.Emitter:Add( "effects/muzzleflash" .. math.random( 1, 4 ), self.Origin )
 
-        if ( Flash ) then
+        if Flash then
             Flash:SetVelocity( self.DirVec * 100 )
             Flash:SetAirResistance( 200 )
             Flash:SetDieTime( 0.1 )
@@ -376,7 +376,7 @@ function EFFECT:Wood()
     for _ = 0, 5 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 20, 70 * self.Scale ) + VectorRand():GetNormalized() * 150 * self.Scale )
             Smoke:SetDieTime( math.Rand( 3, 7 ) * self.Scale )
             Smoke:SetStartAlpha( math.Rand( 40, 60 ) )
@@ -394,7 +394,7 @@ function EFFECT:Wood()
     for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/smokestack", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( self.DirVec * math.random( 20, 70 * self.Scale ) + VectorRand():GetNormalized() * 150 * self.Scale )
             Smoke:SetDieTime( math.Rand( 3, 7 ) * self.Scale )
             Smoke:SetStartAlpha( math.Rand( 40, 60 ) )
@@ -412,7 +412,7 @@ function EFFECT:Wood()
     for _ = 0, 15 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_wood" .. math.random( 1, 2 ), self.Origin + self.DirVec )
 
-        if ( Debris ) then
+        if Debris then
             Debris:SetVelocity( self.DirVec * math.random( 50, 300 * self.Scale ) + VectorRand():GetNormalized() * 300 * self.Scale )
             Debris:SetDieTime( math.random( 0.75, 1 ) )
             Debris:SetStartAlpha( 255 )
@@ -433,7 +433,7 @@ function EFFECT:Glass()
     for _ = 0, 10 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_glass" .. math.random( 1, 3 ), self.Origin + self.DirVec )
 
-        if ( Debris ) then
+        if Debris then
             Debris:SetVelocity( self.DirVec * math.random( 50, 200 ) * self.Scale + VectorRand():GetNormalized() * 60 * self.Scale )
             Debris:SetDieTime( math.random( 1, 1.5 ) )
             Debris:SetStartAlpha( 255 )
@@ -452,7 +452,7 @@ function EFFECT:Glass()
     for _ = 0, 20 * self.Scale do
         local Debris = self.Emitter:Add( "effects/fleck_glass" .. math.random( 1, 3 ), self.Origin )
 
-        if ( Debris ) then
+        if Debris then
             Debris:SetVelocity( self.DirVec * -1 * math.random( 50, 300 ) * self.Scale + VectorRand():GetNormalized() * 60 * self.Scale )
             Debris:SetDieTime( math.random( 0.5, 1 ) )
             Debris:SetStartAlpha( 255 )
@@ -471,7 +471,7 @@ function EFFECT:Blood()
     for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( VectorRand():GetNormalized() * math.random( 0, 50 ) * self.Scale )
             Smoke:SetDieTime( math.Rand( 0.3, 0.7 ) )
             Smoke:SetStartAlpha( 80 )
@@ -491,7 +491,7 @@ function EFFECT:YellowBlood()
     for _ = 0, 10 * self.Scale do
         local Smoke = self.Emitter:Add( "particle/particle_composite", self.Origin )
 
-        if ( Smoke ) then
+        if Smoke then
             Smoke:SetVelocity( VectorRand():GetNormalized() * math.random( 0, 70 ) * self.Scale )
             Smoke:SetDieTime( math.Rand( 0.3, 0.7 ) )
             Smoke:SetStartAlpha( 80 )
