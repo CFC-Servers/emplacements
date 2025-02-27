@@ -23,7 +23,7 @@ function ENT:Initialize()
     tracer:SetPos( self:GetPos() )
     tracer:Spawn()
     tracer:Activate()
-    
+
     self.Tracer = tracer
 
     local glow = ents.Create( "env_sprite" )
@@ -36,21 +36,24 @@ function ENT:Initialize()
     glow:Activate()
 end
 
--- damage equals 400 multipled by a bit less than the firing interval
-local baseDamage = 600 --1188
+local baseDamage = 600
+local tightRad = 200
+local wideRad = 600
+local damageGivenToTight = 0.65
+local damageGivenToWide = 1 - damageGivenToTight
 
 function ENT:Explode( tr )
     local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
 
-    local tightDamage = baseDamage * 0.5 -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
-    local wideDamage  = baseDamage * 0.5
+    local tightDamage = baseDamage * damageGivenToTight -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
+    local wideDamage  = baseDamage * damageGivenToWide
 
     local owner = IsValid( self:GetOwner() ) and self:GetOwner()
     local attacker = owner or self.Turret or self
     local inflictor = self or owner
 
-    util.BlastDamage( inflictor, attacker, tr.HitPos, 500, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
-    util.BlastDamage( inflictor, attacker, tr.HitPos, 200, tightDamage )
+    util.BlastDamage( inflictor, attacker, tr.HitPos, wideRad, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
+    util.BlastDamage( inflictor, attacker, tr.HitPos, tightRad, tightDamage )
 
     if IsValid( tr.Entity ) then
         local directDamage = 100
