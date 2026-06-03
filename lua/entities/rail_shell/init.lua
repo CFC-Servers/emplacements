@@ -36,38 +36,47 @@ function ENT:Initialize()
     glow:Activate()
 end
 
-local baseDamage = 600
+local blastDamageTotal = 600
 local tightRad = 200
 local wideRad = 600
 local damageGivenToTight = 0.65
 local damageGivenToWide = 1 - damageGivenToTight
 
+
+local directDamage = 100
+local directDamageVehicle = 400
+local directDamageNPC = 1500
+
 function ENT:Explode( tr )
     local effectDir = -self:GetForward() --have the effect "point" towards the turret, makes it very clear where you are being shot from
 
-    local tightDamage = baseDamage * damageGivenToTight -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
-    local wideDamage  = baseDamage * damageGivenToWide
+    local tightDamage = blastDamageTotal * damageGivenToTight -- dividing up the damage into 2 components since we have 2 explosions w/ different distances
+    local wideDamage  = blastDamageTotal * damageGivenToWide
 
     local owner = IsValid( self:GetOwner() ) and self:GetOwner()
     local attacker = owner or self.Turret or self
-    local inflictor = self or owner
+    local inflictor = IsValid( self ) and self or owner
 
     util.BlastDamage( inflictor, attacker, tr.HitPos, wideRad, wideDamage ) -- create two explosions so that damage scales wildly the closer you are to the center
     util.BlastDamage( inflictor, attacker, tr.HitPos, tightRad, tightDamage )
 
-    if IsValid( tr.Entity ) then
-        local directDamage = 100
-        if tr.Entity:IsVehicle() then -- reward anyone insane enough to hit some lfs, or vehicle
-            directDamage = 400
+    local hitEnt = tr.Entity
+
+    if IsValid( hitEnt ) then
+        local directDmg = directDamage
+        if hitEnt:IsVehicle() then -- reward anyone insane enough to hit some lfs, or vehicle
+            directDmg = directDamageVehicle
+        elseif hitEnt:IsNPC() then -- these should be great against boss npcs, they're annoying to setup, use, etc
+            directDmg = directDamageNPC
         end
 
-        local damage = DamageInfo()
-        damage:SetDamageType( DMG_BLAST )
-        damage:SetDamage( directDamage )
-        damage:SetDamageForce( self:GetForward() * 70000 )
-        damage:SetAttacker( attacker )
-        damage:SetInflictor( inflictor )
-        tr.Entity:TakeDamageInfo( damage )
+        local dmgInfo = DamageInfo()
+        dmgInfo:SetDamageType( DMG_BLAST )
+        dmgInfo:SetDamage( directDmg )
+        dmgInfo:SetDamageForce( self:GetForward() * 70000 )
+        dmgInfo:SetAttacker( attacker )
+        dmgInfo:SetInflictor( inflictor )
+        hitEnt:TakeDamageInfo( dmgInfo )
     end
 
     local concrete = 67 -- has to be concrete else errors are spammed
@@ -83,10 +92,12 @@ function ENT:Explode( tr )
     util.ScreenShake( tr.HitPos, 10, 5, 1, 1500 )
     util.Decal( "Scorch", tr.HitPos + tr.HitNormal, tr.HitPos - tr.HitNormal )
 
+    local finalPos = self:GetPos()
     self:Remove()
 
     if not IsValid( self.Tracer ) then return end
-    self.Tracer:SetPos( self:GetPos() )
+    self.Tracer:SetPos( finalPos )
+    -- if we remove the tracer instantly, we remove it instantly, and nobody can see where the shot came from...
     SafeRemoveEntityDelayed( self.Tracer, 5 )
 end
 
