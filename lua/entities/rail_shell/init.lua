@@ -66,7 +66,7 @@ function ENT:Explode( tr )
         local directDmg = directDamage
         if hitEnt:IsVehicle() then -- reward anyone insane enough to hit some lfs, or vehicle
             directDmg = directDamageVehicle
-        elseif hitEnt:IsNPC() then -- these should be great against boss npcs, they're annoying to setup, use, etc
+        elseif hitEnt:IsNPC() or hitEnt:IsNextBot() then -- these should be great against boss npcs, they're annoying to setup, use, etc
             directDmg = directDamageNPC
         end
 
